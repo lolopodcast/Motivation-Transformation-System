@@ -1,0 +1,1291 @@
+<!DOCTYPE html>
+<html lang="zh-TW" class="">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>從內部驅動到外部接軌 · 動機轉換系統</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,400;0,700;1,400&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<script>
+tailwind.config={darkMode:'class',theme:{extend:{fontFamily:{sans:['Inter','sans-serif'],serif:['Merriweather','serif']}}}}
+</script>
+<style>
+@keyframes fadeInUp{from{opacity:0;transform:translateY(15px)}to{opacity:1;transform:translateY(0)}}
+.animate-fade-in{animation:fadeInUp 0.5s ease-out forwards}
+.perspective{perspective:1000px}
+.transform-style-3d{transform-style:preserve-3d}
+.backface-hidden{backface-visibility:hidden;-webkit-backface-visibility:hidden}
+.rotate-y-180{transform:rotateY(180deg)}
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:#cbd5e1;border-radius:10px}
+.dark ::-webkit-scrollbar-thumb{background:#475569}
+</style>
+</head>
+<body class="selection:bg-[#004030] selection:text-white dark:selection:bg-[#D8C3A5] dark:selection:text-[#004030]">
+<div id="root"></div>
+<script type="text/babel">
+const {useState,useEffect,useRef,useCallback}=React;
+
+// ── TOTAL modules ──────────────────────────────
+// M0 + M1~M5 (5 modules) + M6 + M7 + M8 = 9
+const TOTAL=9;
+
+// ── DICT ───────────────────────────────────────
+const dict={
+zh:{
+  title:"從內部驅動到外部接軌",
+  subtitle:"動機轉換系統 · 大學生職涯準備課程",
+  nav_modules:"單元目錄",nav_prev:"上一單元",nav_next:"下一單元",
+  key_terms:"關鍵專有名詞",flip_prompt:"點擊翻轉",audio_read:"語音導覽",
+  quiz_title:"模組知識檢定（隨機 4 題）",
+  submit:"提交答案",retry:"重新測驗",
+  score:"得分",correct:"正確",incorrect:"錯誤",explanation:"解析",
+  analytics_title:"學習歷程分析",analytics_desc:"記錄你的學習時間、互動次數與測驗表現，協助反思個人進步軌跡。",
+  analytics_form_title:"基本資料",
+  analytics_group:"組別",analytics_dept:"系級",
+  analytics_dept_ph:"例：IBS3",
+  analytics_id:"學號",analytics_id_ph:"例：112212099",
+  analytics_name:"姓名",analytics_name_ph:"例：Jimmy Lo",
+  analytics_export_csv:"匯出 CSV 歷程記錄",
+  analytics_fill_required:"請填寫完整資訊以解鎖匯出",
+  group_options:["G1","G2","G3","G4","G5","Others"],
+  analytics_total_time:"總學習時間",analytics_total_clicks:"總互動點擊",
+  analytics_overall_acc:"總體測驗答對率",
+  analytics_module:"模組",analytics_time:"停留時間",
+  analytics_clicks:"點擊次數",analytics_acc:"答對率",
+  analytics_correct_ans_total:"答對 / 已填答 / 總題數",
+  analytics_no_data:"尚未測驗",analytics_sec:"秒",analytics_times:"次",
+  // M0
+  m0_nav:"0. 課程總覽",m0_title:"從內部驅動到外部接軌",
+  m0_intro:"為缺乏工作經驗、習慣考試引導，卻即將面對真實產業的大學生與研究生，打造一套完整的動機轉換系統。",
+  m0_why:"為何需要動機轉換？",
+  m0_why_desc:"台灣學生長期習慣由外部（考試、分數、標準答案）驅動學習。面對產業時，這套引擎無法提供持續動力。本課程協助你完成「引擎改裝」——從被動應試者，轉型為主動探索的職場行動者。",
+  m0_stats:[
+    {val:"4",label:"核心動機理論"},
+    {val:"4",label:"執行階段"},
+    {val:"3",label:"常見斷層類型"},
+    {val:"1",label:"數位作品集產出"}
+  ],
+  m0_modules:[
+    {num:"01",title:"三大斷層診斷",desc:"釐清動機、經驗、價值三個斷層，找出你的關鍵卡點"},
+    {num:"02",title:"四大動機理論",desc:"SDT、自我效能、期望理論、三需求理論的整合框架"},
+    {num:"03",title:"四階段執行流程",desc:"從解凍賦權到實踐改善，逐步建構產業認知與自信"},
+    {num:"04",title:"數位作品集設計",desc:"打造能讓面試官「第一秒」就留下印象的互動網頁"},
+    {num:"05",title:"阻力應對與成效評估",desc:"常見卡關情境的因應策略，以及如何衡量系統效果"}
+  ],
+  m0_start:"開始學習 →",
+  // M1
+  m1_nav:"1. 三大斷層診斷",m1_title:"認識三大斷層：找出你的卡點",
+  m1_p1:"台灣學生的動機系統在進入職場前，通常需要一次徹底的「引擎改裝」。這不是個人問題，而是教育系統設計的結構性後果。長期由外部評量驅動的學習模式，讓我們在面對開放性、無標準答案的產業挑戰時，容易陷入三種典型的斷層困境。",
+  m1_p2:"「第一次被問到『你對這個職位有什麼獨特見解？』時，我腦袋一片空白——因為從來沒有人要我自己想答案。」── 典型的動機斷層體驗",
+  m1_cards:[
+    {icon:"🔌",title:"動機斷層",desc:"習慣標準答案，缺乏主動探索的內部驅動力量。面對開放問題時容易焦慮，等待指示而非主動行動。"},
+    {icon:"🏗️",title:"經驗斷層",desc:"缺乏實務經驗，面對真實產業容易產生自我懷疑。「我沒做過」成為迴避嘗試的理由。"},
+    {icon:"🔗",title:"價值斷層",desc:"看不見課堂所學與未來高價值職缺之間的連結。努力感覺無意義，不知道「學這個有什麼用」。"}
+  ],
+  m1_diag_title:"三斷層快速自我診斷",
+  m1_diag:[
+    {q:"我能說出三個以上有興趣的產業，並說明選擇原因。",layer:"動機斷層"},
+    {q:"我曾獨立完成過一個需要查找資料、自行決策的專案。",layer:"經驗斷層"},
+    {q:"我能將一門課的所學，連結到某個具體職缺的需求。",layer:"價值斷層"},
+    {q:"面對新任務，我傾向主動嘗試，而非等待明確指示。",layer:"動機斷層"},
+    {q:"我清楚自己目前的技能與目標職缺要求之間的落差。",layer:"價值斷層"}
+  ],
+  m1_terms:[
+    {front:"動機斷層",back:"習慣外部評量驅動，缺乏自主探索意願。面對開放性挑戰時容易選擇逃避而非嘗試。"},
+    {front:"經驗斷層",back:"因缺乏實務經歷而產生的自我懷疑，會阻礙學生嘗試新事物，形成「沒做過所以不敢做」的惡性循環。"},
+    {front:"價值斷層",back:"無法看見學習投入與職涯回報之間的連結，導致學習動力薄弱與方向感缺失。"}
+  ],
+  m1_q:[
+    {q:"下列哪一項最能描述「動機斷層」的核心問題？",opts:["缺乏相關工作經驗","習慣等待標準答案，缺乏主動探索動力","不清楚目標產業薪資水準","不會撰寫英文履歷"],ans:1,exp:"動機斷層指的是長期外部驅動導致內部驅動力薄弱，面對開放性問題時缺乏主動探索意願。"},
+    {q:"「價值斷層」主要反映的困境是？",opts:["工作薪資太低","看不見課堂學習與職涯利益的連結","不喜歡現在的科系","與同學競爭激烈"],ans:1,exp:"價值斷層是指學生無法感受到學習投入與職涯回報之間的關聯，導致動力低落。"},
+    {q:"三大斷層中，哪一個斷層最容易用「楷模學習」來改善？",opts:["動機斷層","價值斷層","經驗斷層","以上皆非"],ans:2,exp:"經驗斷層的核心是「沒做過所以不敢做」，透過看到他人（楷模）成功案例，可以有效降低心理門檻。"},
+    {q:"以下哪個情境最能體現「經驗斷層」？",opts:["學生不知道應徵什麼職位","學生看到JD不知如何對應自己的學習","學生因沒有實習經驗而覺得自己什麼都不會","學生不喜歡小組作業"],ans:2,exp:"經驗斷層的典型表現是：因缺乏實務歷練而對自身能力產生系統性懷疑。"},
+    {q:"自我診斷量表中，哪一題最對應「價值斷層」？",opts:["我能說出有興趣的產業","我曾完成過自主決策的專案","我能將課堂學習連結到具體職缺需求","面對新任務我傾向主動嘗試"],ans:2,exp:"「能否將課堂學習連結到職缺需求」直接測量學生是否能看見學習與職涯的價值連結。"},
+    {q:"「引擎改裝」這個比喻在文件中指的是什麼？",opts:["換一個新的科系","從外部驅動轉型為內部驅動的動機系統重建","買一台新電腦來提升學習效率","找到高薪工作"],ans:1,exp:"「引擎改裝」比喻學生的動機來源需要從依賴外部評量，轉換為由內部目標與好奇心驅動。"},
+    {q:"三大斷層中，哪一個對「選擇投遞哪家公司」影響最直接？",opts:["動機斷層","經驗斷層","價值斷層","三者影響相同"],ans:2,exp:"價值斷層讓學生看不見自身學習與產業需求的連結，因此難以判斷哪些公司職缺與自己相關。"},
+    {q:"以下哪種教學介入最能同時緩解三個斷層？",opts:["增加期末考試題數","要求學生分析真實職缺並對應自身技能","每週小考強化記憶","強制規定實習時數"],ans:1,exp:"分析真實JD並對應自身技能，可以同時啟動主動探索（動機）、累積分析經驗（經驗）、看見連結（價值）。"}
+  ],
+  // M2
+  m2_nav:"2. 四大動機理論",m2_title:"四大動機理論整合框架",
+  m2_p1:"為了解決三個結構性斷層，我們整合了四個最具實證基礎的動機理論。這四個理論並非隨機並列，而是依據學習歷程的不同階段，有序介入——從初期的自主性培養，到後期的個人化策略制定，形成一套完整的動機升級路徑。",
+  m2_p2:"「最好的動機系統，是讓學生覺得自己『想做』，而不是『必須做』。」── 自我決定論核心精神",
+  m2_theories:[
+    {icon:"🌱",title:"自我決定論 SDT",timing:"初期（週1-2）",desc:"透過賦予專案自主權、建立階段性勝任感、連結真實業界，將外部壓力轉為內部動機。三個核心需求：自主性、勝任感、連結感。"},
+    {icon:"💪",title:"自我效能理論",timing:"中期（週3-5）",desc:"藉由拆解大型任務與楷模學習，幫助零經驗學生建立「我能做到」的自信。關鍵工具：微型成功累積。"},
+    {icon:"🎯",title:"期望理論",timing:"後期（週6-8）",desc:"打通「努力→專業產出→獲得職場優勢」的現實路徑，建立強大誘因。學生必須相信努力有意義、成果有價值。"},
+    {icon:"🧭",title:"三需求理論",timing:"整合期（週9+）",desc:"引導學生覺察自己是被成就、權力還是親和需求驅動，進而擬定個人化的求職策略，找到最適合的職涯方向。"}
+  ],
+  m2_terms:[
+    {front:"自我決定論（SDT）",back:"由Deci & Ryan提出，強調人有三個基本心理需求：自主性（Autonomy）、勝任感（Competence）、連結感（Relatedness）。當三者被滿足時，內在動機最強。"},
+    {front:"自我效能（Self-Efficacy）",back:"由Bandura提出，指個人對自己能夠完成特定任務的信念。透過「微型成功」、楷模觀察、社會說服等方式可以提升自我效能感。"},
+    {front:"期望理論（Expectancy Theory）",back:"由Vroom提出，認為動機=期望值×工具性×誘因值。學生必須相信：努力→成果（期望值）、成果→獎勵（工具性）、獎勵有意義（誘因值）。"}
+  ],
+  m2_q:[
+    {q:"自我決定論（SDT）中，三個基本心理需求是？",opts:["成就感、競爭力、薪資","自主性、勝任感、連結感","努力、能力、機會","興趣、技能、人脈"],ans:1,exp:"SDT的三個核心需求是：Autonomy（自主性）、Competence（勝任感）、Relatedness（連結感）。"},
+    {q:"根據四大理論的介入時序，「期望理論」主要在哪個階段發揮作用？",opts:["初期（週1-2）","中期（週3-5）","後期（週6-8）","整合期（週9+）"],ans:2,exp:"期望理論在後期介入，此時學生已有基礎，需要打通努力→成果→獎勵的現實路徑來強化誘因。"},
+    {q:"「楷模學習」是哪個理論的核心工具？",opts:["自我決定論","自我效能理論","期望理論","三需求理論"],ans:1,exp:"自我效能理論（Bandura）強調透過觀察楷模（他人成功案例）來提升自己「我也能做到」的信念。"},
+    {q:"三需求理論中，「成就需求」高的學生最適合哪類工作環境？",opts:["需要大量人際互動的公關職位","需要指揮他人的管理職位","有明確目標與挑戰性的專案型工作","穩定且重複性高的行政工作"],ans:2,exp:"成就需求（nAch）高的人被挑戰性目標驅動，適合有明確成果指標的專案型工作。"},
+    {q:"期望理論中，若學生認為「努力了也不會有好成果」，這破壞了公式中的哪個元素？",opts:["誘因值（Valence）","工具性（Instrumentality）","期望值（Expectancy）","以上皆是"],ans:2,exp:"期望值（Expectancy）指的是「努力→成果」的信念。若這個連結斷裂，整個動機公式趨近於零。"},
+    {q:"SDT框架中，「賦予學生自主選擇產業」主要滿足哪個需求？",opts:["勝任感","連結感","自主性","成就需求"],ans:2,exp:"讓學生自主選擇感興趣的產業，直接滿足SDT中的自主性（Autonomy）需求，是解凍階段的核心設計。"},
+    {q:"「微型成功」策略主要來自哪個理論？",opts:["期望理論","三需求理論","自我效能理論","自我決定論"],ans:2,exp:"自我效能理論強調透過拆解任務、累積小勝利，逐步建立「我能做到」的信念，微型成功是其核心工具。"},
+    {q:"哪個理論最適合協助學生「找到適合自己個性的職涯方向」？",opts:["自我效能理論","期望理論","自我決定論","三需求理論"],ans:3,exp:"三需求理論（McClelland）透過分析個人的成就、權力、親和需求傾向，協助制定個人化的職涯策略。"}
+  ],
+  // M3
+  m3_nav:"3. 四階段執行流程",m3_title:"四階段執行流程：從解凍到實踐",
+  m3_p1:"理論框架需要轉化為可操作的教學流程。這套執行系統引導學生從「總體（產業）」走到「個體（自我）」，分四個明確階段逐步推進。每個階段都有具體的時程建議、核心產出物與檢核方式。",
+  m3_p2:"「一個好的流程設計，讓學生在每個節點都能感受到具體的進步。這種勝任感，是推動下一步的燃料。」",
+  m3_stages:[
+    {num:"01",title:"解凍與賦權",weeks:"週 1-2",color:"bg-[#004030]",output:"個人產業興趣清單",check:"用一分鐘說明選擇理由",desc:"打破考試迷思，賦予學生自主選擇產業的權利。移除「選錯了怎麼辦」的焦慮，用降低門檻取代高壓要求。"},
+    {num:"02",title:"擴增產業認知",weeks:"週 3-5",color:"bg-[#048A81]",output:"JD分析表 + BMC圖",check:"同儕互評（附評分標準）",desc:"藉由拆解真實職缺描述（JD）與商業模式圖（BMC），建立對產業生態的具體認識，取代模糊的「感覺」。"},
+    {num:"03",title:"建構微型成功",weeks:"週 6-7",color:"bg-[#54C6EB]",output:"技能落差表 + 行動計畫",check:"教師一對一回饋談話",desc:"盤點現有技能與市場需求的落差，擬定具體可執行的補強策略。把「我什麼都不會」轉化為「我知道接下來要做什麼」。"},
+    {num:"04",title:"實踐與持續改善",weeks:"週 8-12",color:"bg-[#D8C3A5]",output:"互動網頁 + 改善紀錄",check:"模擬面試簡報（8分鐘）",desc:"製作數位作品集，接受業界模擬審查，根據回饋迭代改善。學習「不怕犯錯、持續精進」的業界心態。"}
+  ],
+  m3_terms:[
+    {front:"職缺描述（JD）拆解",back:"將職缺描述系統化分析，分類為：必備硬技能、偏好軟技能、企業文化線索、隱性期望。是銜接「市場需求」與「自身現況」的關鍵工具。"},
+    {front:"商業模式圖（BMC）",back:"由Osterwalder提出的九宮格框架，涵蓋價值主張、客戶群體、收入來源等九個元素，幫助學生理解一家企業「如何賺錢與生存」的完整邏輯。"},
+    {front:"迭代思維",back:"源自敏捷開發文化，強調「快速產出→獲得回饋→改善→再產出」的循環。在職涯準備中，展現迭代思維比第一版完美更重要。"}
+  ],
+  m3_q:[
+    {q:"四個執行階段中，「解凍與賦權」的主要目標是？",opts:["讓學生學會寫商業計畫書","破除被動心態，建立自主探索動力","讓學生找到實習工作","強迫學生選定職涯方向"],ans:1,exp:"解凍與賦權聚焦在打破考試迷思，讓學生感受到「可以自己選擇」的自主性，而非給予明確指示。"},
+    {q:"「擴增認知」階段的核心產出物是？",opts:["個人履歷表","JD結構化分析表 + BMC圖","職涯規劃書","讀書報告"],ans:1,exp:"這個階段要求學生分析真實職缺描述（JD）並繪製目標企業的商業模式圖（BMC），建立產業認知。"},
+    {q:"Business Model Canvas（BMC）主要幫助學生理解什麼？",opts:["如何寫英文履歷","一家企業如何賺錢與生存的完整邏輯","如何準備面試問題","如何計算薪資期望"],ans:1,exp:"BMC是九宮格框架，讓學生能夠系統化地分析一家企業的商業模式，包括價值主張、客戶群體、收入來源等。"},
+    {q:"第四階段「實踐與持續改善」強調的關鍵心態是？",opts:["第一次就要做到完美","不怕犯錯、持續精進的迭代思維","等到準備好了再行動","避免被批評和指正"],ans:1,exp:"這個階段刻意設計接受回饋與改善的循環，目的是培養業界重視的迭代思維，而非追求一次完美。"},
+    {q:"模擬業界審查的評分向度不包含以下哪一項？",opts:["邏輯清晰度","產業理解深度","英文發音準確度","自我認知精準度"],ans:2,exp:"模擬審查的四個評分向度為：邏輯清晰度、產業理解深度、自我認知精準度、成長潛力展現。英文發音不在其中。"},
+    {q:"「回饋吸收表」要求學生記錄哪三個要素？",opts:["問題、解答、分數","收到的批評→我的理解→下一版如何改善","優點、缺點、建議","時間、地點、人物"],ans:1,exp:"回饋吸收表要求記錄：收到的關鍵批評→我的理解→下一版如何改善，培養主動吸收回饋的能力。"},
+    {q:"四個階段與四大理論的對應，以下哪一組最正確？",opts:["解凍→期望理論","擴增認知→三需求理論","建構微型成功→自我效能理論","實踐改善→自我決定論"],ans:2,exp:"建構微型成功對應自我效能理論——透過累積小的具體成就，建立「我能做到」的自信。"},
+    {q:"「技能落差表」的主要功能是？",opts:["列出所有學過的課程","視覺化對比市場需求與自身現況的差距","規劃每天的讀書時間","計算GPA排名"],ans:1,exp:"技能落差表幫助學生清楚看見「市場要什麼」與「我現在有什麼」之間的差距，進而制定補強計畫。"}
+  ],
+  // M4
+  m4_nav:"4. 數位作品集設計",m4_title:"互動式網頁：你的數位作品集",
+  m4_p1:"最終的分析成果不應是一份紙本報告，而應該是一個能直接展示給面試官看的互動式網頁。這個「數位作品集」兼具學習成果展示與求職工具的雙重功能，能讓面試官在5分鐘內完整評估你的思維能力與執行力。",
+  m4_p2:"「面試官每天看幾十份履歷。一個能互動的網頁，是讓對方停下來多看3分鐘的最好理由。」",
+  m4_modules:[
+    {num:"M1",icon:"🏠",title:"首頁與價值主張",timing:"前10秒",desc:"一句話定位＋核心驅動力說明＋導覽動線。讓面試官在第一秒就知道「你是誰、你關注什麼問題」。"},
+    {num:"M2",icon:"🌐",title:"產業趨勢與商業模式",timing:"第11-60秒",desc:"目標企業BMC視覺化＋痛點洞察＋個人選擇理由。展現宏觀視野與獨立判斷力。"},
+    {num:"M3",icon:"🎯",title:"職涯策略與技能盤點",timing:"第1-3分鐘",desc:"JD拆解表＋雷達圖（需求vs現況）＋具體行動計畫。展現精準的自我認知。"},
+    {num:"M4",icon:"📁",title:"專案實績與持續改善",timing:"第3-5分鐘",desc:"微型專案展示＋回饋改善歷程（v1→批評→v2）。用具體成果與迭代記錄證明執行力。"}
+  ],
+  m4_tools:[
+    {name:"Notion",level:"★☆☆",use:"快速上線、內容為主",note:"免費、易更新"},
+    {name:"Gamma.app",level:"★☆☆",use:"視覺效果佳、類簡報風",note:"AI輔助排版"},
+    {name:"Canva（網站）",level:"★★☆",use:"設計感強、創意排版",note:"模板豐富"},
+    {name:"Google Sites",level:"★★☆",use:"嵌入Google文件",note:"免費整合"},
+    {name:"HTML/CSS",level:"★★★",use:"高度客製化",note:"技術力加分"}
+  ],
+  m4_terms:[
+    {front:"個人價值主張（Value Proposition）",back:"用一句話清楚說明：你是誰、你能解決什麼問題、你與其他候選人的差異在哪裡。例：「具備AI應用思維的專案管理儲備人才」。"},
+    {front:"雷達圖（Radar Chart）",back:"多維度比較的視覺化工具，在職涯準備中用於對比「市場需求技能分佈」與「個人當前技能分佈」，直觀呈現強項與弱項。"},
+    {front:"數位作品集（Digital Portfolio）",back:"整合個人分析成果、專案實績、職涯策略的線上展示頁面，兼具求職工具與個人品牌建立的功能，比傳統履歷更能展現思維深度。"}
+  ],
+  m4_q:[
+    {q:"數位作品集相較於傳統履歷的最大優勢是？",opts:["可以放更多照片","能更完整展現思維深度與執行過程","不需要花時間製作","可以避免面試"],ans:1,exp:"數位作品集能展示分析過程、迭代思維與具體成果，讓面試官感受到「思維深度」，這是傳統PDF履歷做不到的。"},
+    {q:"面試官閱讀網頁的「前10秒」最希望得到什麼資訊？",opts:["詳細的求學經歷","這個人是誰、關注什麼問題（個人定位）","所有做過的專案清單","GPA與獎學金紀錄"],ans:1,exp:"前10秒是關鍵的「值不值得繼續看」判斷點，個人定位的清晰度決定面試官是否繼續閱讀。"},
+    {q:"「個人價值主張」應該包含哪三個要素？",opts:["姓名、系所、GPA","你是誰、你能解決什麼問題、你的差異化","工作經驗、技能、語言","興趣、個性、家庭背景"],ans:1,exp:"個人價值主張（Value Proposition）需要回答：我是誰（身份）、我能做什麼（能力）、我與別人有何不同（差異化）。"},
+    {q:"雷達圖在數位作品集中的主要用途是？",opts:["呈現個人興趣分布","視覺化對比市場需求與自身現況的技能差距","展示學業成績","比較不同公司的薪資"],ans:1,exp:"雷達圖能直觀呈現多個技能維度上「市場要求」與「個人現況」的對比，是自我認知精準度的展示工具。"},
+    {q:"第四個網頁模塊「專案實績」最應強調什麼？",opts:["只展示成功的成果","展示v1草稿→獲得批評→v2改善的迭代歷程","列出所有修過的課","提供厚重的報告文件"],ans:1,exp:"迭代歷程（回饋→改善→再產出）是業界最看重的思維展示，比單純展示完美成果更有說服力。"},
+    {q:"對於沒有程式能力的學生，以下哪個工具最適合快速建立網頁？",opts:["React + TypeScript","Notion 或 Gamma.app","C++ 程式設計","Adobe Photoshop"],ans:1,exp:"Notion和Gamma.app均為零程式碼工具，適合需要快速上線、聚焦在內容品質的學生使用。"},
+    {q:"數位作品集的模塊順序設計遵循什麼邏輯？",opts:["字母順序","隨機排列","對應面試官的閱讀心理歷程（定位→視野→認知→執行）","依照製作難度由易到難"],ans:2,exp:"四個模塊的順序刻意設計對應面試官的評估心理：先確認定位→驗證視野→確認自我認知→評估執行力。"},
+    {q:"製作數位作品集的最終目的是？",opts:["在社群媒體累積按讚數","直接取代實際的工作能力","讓面試官在5分鐘內完整評估你的思維與執行力","展示個人攝影作品"],ans:2,exp:"數位作品集是求職工具，目標是在有限時間內讓面試官看到思維邏輯、產業認識與執行能力的完整呈現。"}
+  ],
+  // M5
+  m5_nav:"5. 阻力應對與成效評估",m5_title:"常見阻力應對與系統成效評估",
+  m5_p1:"任何系統在實際執行時都會遇到阻力。這套動機轉換系統的價值，不只在於「順利時的學習路徑」，更在於「遇到阻力時的回應機制」。同時，我們需要明確的評估指標，才能知道這套系統是否真正發揮了效果。",
+  m5_p2:"「系統的健壯性不在於沒有問題，而在於遇到問題時有清晰的應對路徑。」",
+  m5_obstacles:[
+    {problem:"不知道要選哪個產業",cause:"動機斷層：習慣等待指示",solution:"提供5-10個產業候選清單，讓學生選「最不討厭的」，降低選擇門檻（SDT自主性）"},
+    {problem:"做了JD分析但不知如何使用",cause:"價值斷層：看不見分析的意義",solution:"分享楷模案例：「這樣做之後，拿到了什麼機會」（自我效能楷模學習）"},
+    {problem:"作品不夠好不想分享",cause:"經驗斷層：害怕被評判",solution:"只要求展示「最小可展示單元」，一張圖表即可，不求完美（SDT勝任感）"},
+    {problem:"改了兩版還是一樣，很挫折",cause:"期望路徑不清楚",solution:"提供目標職缺的具體評審標準，讓學生知道及格線在哪裡（期望理論）"},
+    {problem:"中途失去興趣，開始敷衍",cause:"選題與個人動機連結不強",solution:"一對一談話，重新確認三需求中哪個核心驅動力沒被滿足（三需求理論）"}
+  ],
+  m5_metrics_title:"成效評估指標",
+  m5_terms:[
+    {front:"勝任感評分（1-10）",back:"課程前後請學生對「我有信心將學習連結到目標職缺」進行評分，計算平均提升幅度。是最直接的動機轉換量化指標。"},
+    {front:"敘事清晰度測試",back:"課程結束時，請學生用90秒說明「我是誰、我關注什麼、我有什麼成果」。若能流暢表達，代表三個斷層均已有效連結。"},
+    {front:"迭代次數追蹤",back:"記錄每位學生的網頁修改次數，作為「迭代思維」的量化指標。修改次數本身反映了對回饋的重視程度與主動改善意願。"}
+  ],
+  m5_q:[
+    {q:"當學生「不知道要選哪個產業」時，最佳的介入策略是？",opts:["強制分配產業","移除選擇，直接指定主題","提供候選清單降低選擇門檻，滿足自主性需求","增加懲罰機制"],ans:2,exp:"這個阻力源自動機斷層，介入策略應回到SDT的自主性需求：降低門檻（提供清單），而非移除選擇或強制執行。"},
+    {q:"「勝任感評分」主要用來測量什麼？",opts:["學生的GPA進步幅度","學生對自身能力連結職涯需求的信心變化","教師的教學滿意度","課程的出席率"],ans:1,exp:"勝任感評分（1-10分，課前課後對比）是動機轉換最直接的量化指標，測量學生「連結感」的強度變化。"},
+    {q:"「敘事清晰度測試」的時間限制是多少秒？",opts:["30秒","60秒","90秒","120秒"],ans:2,exp:"90秒說清楚「我是誰、我關注什麼、我有什麼成果」，模擬面試中的自我介紹情境，是質化評估的關鍵工具。"},
+    {q:"以下哪個成效指標屬於「質化指標」？",opts:["投遞履歷數","獲得面試數","學生自我反思報告的內容深度","網頁修改次數"],ans:2,exp:"自我反思報告需要質性分析，無法直接量化，是質化指標。其他三者均可計數，屬於量化指標。"},
+    {q:"「改了兩版還是一樣挫折」這個阻力，最根本的問題是？",opts:["學生不夠努力","學生不知道評審標準在哪裡（期望路徑不清）","教師沒有給足夠時間","作業太難"],ans:1,exp:"這個阻力源自期望理論中的工具性斷裂——學生不清楚「做什麼樣的改善」才能換來認可，需要明確標準。"},
+    {q:"當學生「中途失去興趣」時，最適合使用哪個理論來介入？",opts:["自我效能理論","期望理論","自我決定論","三需求理論"],ans:3,exp:"三需求理論幫助釐清：學生的成就、親和或權力需求，哪一個在當前設計中沒有被滿足，進而調整策略。"},
+    {q:"「迭代次數」作為評估指標，測量的核心能力是？",opts:["學習時間的長短","對回饋的重視程度與主動改善意願","記憶力","與同學的協作能力"],ans:1,exp:"迭代次數反映的不只是技術能力，更是一種思維模式——願意根據回饋反覆改善，正是業界最看重的特質之一。"},
+    {q:"這套動機轉換系統的設計哲學，最接近以下哪個描述？",opts:["用外部壓力強制學生行動","讓學習變得更簡單，讓學生不需要付出太多","創造條件讓學生由內而外地想要行動和成長","用獎懲機制控制學生行為"],ans:2,exp:"整套系統的設計核心是「創造內部動機的條件」——透過自主性、勝任感、連結感、楷模學習等機制，讓學生自發行動。"}
+  ],
+  // M6
+  m6_nav:"6. 延伸資源",m6_title:"延伸學習資源",m6_desc:"精選動機理論、職涯準備與數位作品集相關的學習資源，協助你深入探索。",
+  // M7
+  mlab_nav:"7. 互動實驗室",mlab_title:"互動實驗室：動機診斷工具",mlab_desc:"透過互動工具，診斷你的動機型態、檢視理論介入時序，並模擬期望值計算。",
+  // Footer
+  date:"Version 2026.03.12",
+  copyright:"For Educational Use Only",
+  architect_label:"Architect:",
+  architect_name:"Prof. Shihmin Lo",
+  architect_url:"https://www.ibs.ncnu.edu.tw/index.php/faculty/tenured-professor/299-smlo"
+},
+en:{
+  title:"From Internal Drive to External Connection",
+  subtitle:"Motivation Transformation System · Career Preparation Course",
+  nav_modules:"Modules",nav_prev:"Previous",nav_next:"Next",
+  key_terms:"Key Terms",flip_prompt:"Click to flip",audio_read:"Audio Guide",
+  quiz_title:"Module Quiz (Random 4 Questions)",
+  submit:"Submit",retry:"Retry",
+  score:"Score",correct:"Correct",incorrect:"Incorrect",explanation:"Explanation",
+  analytics_title:"Learning Analytics",analytics_desc:"Track your learning time, interactions, and quiz performance to reflect on your progress.",
+  analytics_form_title:"Basic Information",
+  analytics_group:"Group",analytics_dept:"Department",
+  analytics_dept_ph:"e.g. IBS3",
+  analytics_id:"Student ID",analytics_id_ph:"e.g. 112212099",
+  analytics_name:"Name",analytics_name_ph:"e.g. Jimmy Lo",
+  analytics_export_csv:"Export CSV Record",
+  analytics_fill_required:"Please complete all fields to unlock export",
+  group_options:["G1","G2","G3","G4","G5","Others"],
+  analytics_total_time:"Total Study Time",analytics_total_clicks:"Total Interactions",
+  analytics_overall_acc:"Overall Quiz Accuracy",
+  analytics_module:"Module",analytics_time:"Time Spent",
+  analytics_clicks:"Clicks",analytics_acc:"Accuracy",
+  analytics_correct_ans_total:"Correct / Answered / Total",
+  analytics_no_data:"Not yet taken",analytics_sec:"sec",analytics_times:"times",
+  m0_nav:"0. Overview",m0_title:"From Internal Drive to External Connection",
+  m0_intro:"A comprehensive motivation transformation system designed for students lacking work experience who are about to face the real industry.",
+  m0_why:"Why Motivation Transformation?",
+  m0_why_desc:"Taiwanese students are long accustomed to external-driven learning (exams, grades, standard answers). This engine fails when facing open-ended industry challenges. This course helps you 'rebuild the engine'—from passive test-taker to proactive career agent.",
+  m0_stats:[
+    {val:"4",label:"Core Theories"},
+    {val:"4",label:"Execution Stages"},
+    {val:"3",label:"Gap Types"},
+    {val:"1",label:"Digital Portfolio"}
+  ],
+  m0_modules:[
+    {num:"01",title:"Three-Gap Diagnosis",desc:"Identify motivation, experience, and value gaps to find your key bottleneck"},
+    {num:"02",title:"Four Motivation Theories",desc:"Integrated framework of SDT, Self-Efficacy, Expectancy, and Three Needs Theory"},
+    {num:"03",title:"Four-Stage Execution",desc:"From unfreezing to practice—building industry knowledge and confidence step by step"},
+    {num:"04",title:"Digital Portfolio Design",desc:"Build an interactive webpage that makes interviewers stop in their first second"},
+    {num:"05",title:"Resistance & Evaluation",desc:"Strategies for common roadblocks and how to measure system effectiveness"}
+  ],
+  m0_start:"Start Learning →",
+  m1_nav:"1. Three-Gap Diagnosis",m1_title:"Understanding the Three Gaps",
+  m1_p1:"Before entering the workforce, Taiwanese students' motivation systems typically need a complete 'engine overhaul.' This is not a personal failure—it's a structural consequence of the education system design. Three typical gap challenges emerge when facing open-ended, standard-answer-free industry challenges.",
+  m1_p2:"'The first time I was asked what unique insight I had about this role, my mind went blank—because no one had ever asked me to think for myself.' — A typical motivation gap experience",
+  m1_cards:[
+    {icon:"🔌",title:"Motivation Gap",desc:"Accustomed to standard answers, lacking internal drive for proactive exploration. Tends to wait for instructions rather than take initiative."},
+    {icon:"🏗️",title:"Experience Gap",desc:"Lack of practical experience leading to self-doubt when facing real industries. 'I've never done this' becomes a reason to avoid trying."},
+    {icon:"🔗",title:"Value Gap",desc:"Cannot see the connection between classroom learning and high-value career opportunities. Effort feels meaningless without visible purpose."}
+  ],
+  m1_diag_title:"Quick Self-Diagnosis Checklist",
+  m1_diag:[
+    {q:"I can name 3+ industries I'm interested in and explain why.",layer:"Motivation Gap"},
+    {q:"I've independently completed a project requiring research and decision-making.",layer:"Experience Gap"},
+    {q:"I can connect what I learned in a course to a specific job requirement.",layer:"Value Gap"},
+    {q:"When facing new tasks, I tend to try proactively rather than wait for instructions.",layer:"Motivation Gap"},
+    {q:"I clearly understand the gap between my current skills and my target job requirements.",layer:"Value Gap"}
+  ],
+  m1_terms:[
+    {front:"Motivation Gap",back:"Accustomed to external evaluation driving learning. Tends to avoid open-ended challenges rather than attempt them. The core symptom: waiting for instructions."},
+    {front:"Experience Gap",back:"Self-doubt arising from lack of practical experience. Creates a vicious cycle of 'never done it, so afraid to try,' blocking new attempts and growth."},
+    {front:"Value Gap",back:"Inability to see the connection between learning investment and career returns, leading to weak motivation and lack of direction."}
+  ],
+  m1_q:[
+    {q:"Which best describes the core problem of the 'Motivation Gap'?",opts:["Lack of work experience","Habituated to standard answers, lacking proactive drive","Unaware of salary levels","Cannot write English resumes"],ans:1,exp:"The Motivation Gap refers to weak internal drive caused by long-term external motivation, leading to avoidance of open-ended challenges."},
+    {q:"The 'Value Gap' primarily reflects which challenge?",opts:["Low salary","Cannot see the connection between learning and career benefits","Disliking current major","Intense peer competition"],ans:1,exp:"The Value Gap means students cannot perceive the relationship between learning effort and career returns."},
+    {q:"Which gap is most effectively addressed through 'role model learning'?",opts:["Motivation Gap","Value Gap","Experience Gap","None of the above"],ans:2,exp:"The Experience Gap's core is 'afraid to try because never done it.' Seeing role models succeed effectively lowers psychological barriers."},
+    {q:"Which scenario best illustrates the 'Experience Gap'?",opts:["Student doesn't know what job to apply for","Student reads a JD but can't map it to their learning","Student has no internship and feels they have no skills","Student dislikes group projects"],ans:2,exp:"The Experience Gap's typical manifestation: systematic self-doubt arising from lack of practical experience."},
+    {q:"In the self-diagnosis checklist, which question best targets the 'Value Gap'?",opts:["I can name industries I'm interested in","I've completed a self-directed project","I can connect course learning to specific job requirements","I proactively attempt new tasks"],ans:2,exp:"'Connecting course learning to job requirements' directly measures whether students can see the value connection between learning and career."},
+    {q:"The 'engine overhaul' metaphor refers to?",opts:["Switching to a new major","Rebuilding the motivation system from external to internal drive","Buying a new computer","Finding a high-paying job"],ans:1,exp:"'Engine overhaul' describes the need to shift from relying on external evaluation to being driven by internal goals and curiosity."},
+    {q:"Which gap most directly affects 'deciding which companies to apply to'?",opts:["Motivation Gap","Experience Gap","Value Gap","All equally"],ans:2,exp:"The Value Gap prevents students from seeing connections between their learning and industry needs, making it hard to identify relevant opportunities."},
+    {q:"Which teaching intervention most effectively addresses all three gaps simultaneously?",opts:["More exam questions","Asking students to analyze real JDs and map to their own skills","Weekly quizzes","Mandatory internship hours"],ans:1,exp:"Analyzing real JDs and mapping skills simultaneously activates proactive exploration (motivation), builds analysis experience (experience), and reveals connections (value)."}
+  ],
+  m2_nav:"2. Four Motivation Theories",m2_title:"Integrated Framework of Four Motivation Theories",
+  m2_p1:"To address the three structural gaps, we integrate four evidence-based motivation theories. These theories are not randomly listed—they are sequentially introduced according to different learning stages, forming a complete motivation upgrade pathway from early autonomy cultivation to later personalized strategy development.",
+  m2_p2:"'The best motivation system makes students feel they WANT to do something, not that they MUST do it.' — The core spirit of Self-Determination Theory",
+  m2_theories:[
+    {icon:"🌱",title:"Self-Determination Theory (SDT)",timing:"Early Stage (Week 1-2)",desc:"Convert external pressure into internal motivation by granting project autonomy, building incremental competence, and connecting to real industry. Three core needs: Autonomy, Competence, Relatedness."},
+    {icon:"💪",title:"Self-Efficacy Theory",timing:"Middle Stage (Week 3-5)",desc:"Help zero-experience students build 'I can do it' confidence through task decomposition and role model learning. Key tool: accumulating micro-successes."},
+    {icon:"🎯",title:"Expectancy Theory",timing:"Late Stage (Week 6-8)",desc:"Open the realistic pathway of 'effort → professional output → career advantage' to build powerful incentives. Students must believe effort is meaningful and outcomes are valuable."},
+    {icon:"🧭",title:"Three Needs Theory",timing:"Integration (Week 9+)",desc:"Guide students to discover whether they are driven by achievement, power, or affiliation needs, then develop personalized career strategies to find the most suitable direction."}
+  ],
+  m2_terms:[
+    {front:"Self-Determination Theory (SDT)",back:"Proposed by Deci & Ryan. Emphasizes three basic psychological needs: Autonomy, Competence, and Relatedness. When all three are satisfied, intrinsic motivation is strongest."},
+    {front:"Self-Efficacy",back:"Proposed by Bandura. Refers to one's belief in their ability to complete specific tasks. Can be enhanced through micro-successes, observing role models, and social persuasion."},
+    {front:"Expectancy Theory",back:"Proposed by Vroom. Motivation = Expectancy × Instrumentality × Valence. Students must believe: effort→outcome (Expectancy), outcome→reward (Instrumentality), reward is meaningful (Valence)."}
+  ],
+  m2_q:[
+    {q:"What are the three basic psychological needs in SDT?",opts:["Achievement, competitiveness, salary","Autonomy, Competence, Relatedness","Effort, ability, opportunity","Interest, skills, network"],ans:1,exp:"SDT's three core needs are: Autonomy, Competence, and Relatedness."},
+    {q:"According to the intervention sequence, which stage does 'Expectancy Theory' mainly apply?",opts:["Early Stage (Week 1-2)","Middle Stage (Week 3-5)","Late Stage (Week 6-8)","Integration (Week 9+)"],ans:2,exp:"Expectancy Theory intervenes in the late stage, when students have foundations and need a clear pathway of effort→outcome→reward."},
+    {q:"'Role model learning' is a core tool of which theory?",opts:["SDT","Self-Efficacy Theory","Expectancy Theory","Three Needs Theory"],ans:1,exp:"Bandura's Self-Efficacy Theory emphasizes observing role models' success to build one's own belief of 'I can do it too.'"},
+    {q:"Students with high Achievement Needs (nAch) are most suited to?",opts:["Public relations with heavy social interaction","Management requiring directing others","Project work with clear goals and challenges","Stable, repetitive administrative work"],ans:2,exp:"High nAch individuals are driven by challenging goals and are best suited for project work with clear outcome metrics."},
+    {q:"In Expectancy Theory, if a student believes 'effort won't lead to good results,' which element is broken?",opts:["Valence","Instrumentality","Expectancy","All of the above"],ans:2,exp:"Expectancy refers to the belief that effort→outcome. When this link breaks, the entire motivation formula approaches zero."},
+    {q:"In SDT, 'giving students autonomy to choose their industry' primarily satisfies which need?",opts:["Competence","Relatedness","Autonomy","Achievement Need"],ans:2,exp:"Letting students freely choose their industry directly satisfies SDT's Autonomy need—the core design of the unfreezing stage."},
+    {q:"The 'micro-success' strategy primarily comes from which theory?",opts:["Expectancy Theory","Three Needs Theory","Self-Efficacy Theory","SDT"],ans:2,exp:"Self-Efficacy Theory emphasizes decomposing tasks and accumulating small wins to gradually build 'I can do it' confidence."},
+    {q:"Which theory best helps students 'find a career direction that suits their personality'?",opts:["Self-Efficacy Theory","Expectancy Theory","SDT","Three Needs Theory"],ans:3,exp:"Three Needs Theory (McClelland) analyzes individual achievement, power, and affiliation need tendencies to develop personalized career strategies."}
+  ],
+  m3_nav:"3. Four-Stage Execution",m3_title:"Four-Stage Execution: From Unfreezing to Practice",
+  m3_p1:"Theoretical frameworks must be translated into actionable teaching flows. This execution system guides students from 'macro (industry)' to 'micro (self)' through four clearly defined stages. Each stage includes specific timing recommendations, core deliverables, and checkpoints.",
+  m3_p2:"'A good process design makes students feel concrete progress at every checkpoint. That sense of competence is the fuel for the next step.'",
+  m3_stages:[
+    {num:"01",title:"Unfreeze & Empower",weeks:"Week 1-2",color:"bg-[#004030]",output:"Personal Industry Interest List",check:"1-minute justification pitch",desc:"Break exam mindset. Give students the right to autonomously choose their industry. Remove 'what if I choose wrong' anxiety by lowering barriers instead of raising pressure."},
+    {num:"02",title:"Expand Industry Knowledge",weeks:"Week 3-5",color:"bg-[#048A81]",output:"JD Analysis Table + BMC",check:"Peer review with rubric",desc:"By deconstructing real Job Descriptions and Business Model Canvases, build concrete understanding of industry ecosystems to replace vague 'feelings.'"},
+    {num:"03",title:"Build Micro-Successes",weeks:"Week 6-7",color:"bg-[#54C6EB]",output:"Skill Gap Table + Action Plan",check:"1-on-1 teacher feedback",desc:"Inventory current skills vs. market demands and develop executable improvement strategies. Transform 'I know nothing' into 'I know what to do next.'"},
+    {num:"04",title:"Practice & Continuous Improvement",weeks:"Week 8-12",color:"bg-[#D8C3A5]",output:"Interactive Webpage + Revision Record",check:"Mock interview pitch (8 min)",desc:"Build a digital portfolio, receive industry mock reviews, and iterate based on feedback. Learn the industry mindset of 'unafraid to fail, committed to continuous improvement.'"}
+  ],
+  m3_terms:[
+    {front:"Job Description (JD) Deconstruction",back:"Systematically analyze JDs into: required hard skills, preferred soft skills, company culture clues, and implicit expectations. The key tool connecting 'market demands' to 'personal current state.'"},
+    {front:"Business Model Canvas (BMC)",back:"Nine-block framework by Osterwalder covering value proposition, customer segments, revenue streams, and six other elements. Helps students understand how a company 'makes money and survives.'"},
+    {front:"Iterative Mindset",back:"From agile development culture: 'quick output → feedback → improve → output again.' In career preparation, demonstrating iterative thinking is more valuable than producing a perfect first version."}
+  ],
+  m3_q:[
+    {q:"What is the main goal of the 'Unfreeze & Empower' stage?",opts:["Teach students to write business plans","Break passive mindset and build proactive exploration drive","Help students find internships","Force students to commit to a career direction"],ans:1,exp:"Unfreezing focuses on breaking exam mindset and letting students experience 'I can choose,' not on giving directives."},
+    {q:"What are the core deliverables of the 'Expand Knowledge' stage?",opts:["Personal resume","JD analysis table + BMC","Career planning report","Book report"],ans:1,exp:"This stage requires analyzing real JDs and drawing target company BMCs to build concrete industry knowledge."},
+    {q:"What does the Business Model Canvas (BMC) mainly help students understand?",opts:["How to write an English resume","How a company makes money and survives","How to prepare interview questions","How to calculate salary expectations"],ans:1,exp:"BMC is a nine-block framework for systematically analyzing a company's business model including value proposition, customers, and revenue streams."},
+    {q:"What is the key mindset emphasized in Stage 4 'Practice & Continuous Improvement'?",opts:["Perfect the first attempt","Iterative thinking: unafraid to fail, committed to improvement","Wait until fully prepared","Avoid criticism and correction"],ans:1,exp:"This stage deliberately designs feedback-improvement cycles to cultivate the iterative mindset valued by industry, not first-attempt perfection."},
+    {q:"Which dimension is NOT part of the mock review scoring?",opts:["Logical clarity","Industry understanding depth","English pronunciation accuracy","Self-awareness precision"],ans:2,exp:"The four scoring dimensions are: Logical clarity, Industry understanding depth, Self-awareness precision, and Growth potential. English pronunciation is not included."},
+    {q:"What three elements does the 'Feedback Absorption Sheet' require students to record?",opts:["Problem, answer, score","Key criticism received → my understanding → how to improve in v2","Strengths, weaknesses, suggestions","Time, place, people"],ans:1,exp:"The sheet records: key criticism received → my understanding → how to improve next version, cultivating active feedback absorption."},
+    {q:"Which theory-stage pairing is most accurate?",opts:["Unfreezing→Expectancy Theory","Expanding Knowledge→Three Needs Theory","Building Micro-Successes→Self-Efficacy Theory","Practice→SDT"],ans:2,exp:"Building Micro-Successes corresponds to Self-Efficacy Theory—accumulating small concrete achievements to build 'I can do it' confidence."},
+    {q:"What is the primary function of the 'Skill Gap Table'?",opts:["List all courses taken","Visually compare market demands vs. personal current skills","Plan daily study schedule","Calculate GPA ranking"],ans:1,exp:"The Skill Gap Table helps students clearly see the gap between 'what the market wants' and 'what I currently have,' enabling targeted improvement planning."}
+  ],
+  m4_nav:"4. Digital Portfolio",m4_title:"Interactive Webpage: Your Digital Portfolio",
+  m4_p1:"The final analysis output should not be a paper report—it should be an interactive webpage that can be directly shown to interviewers. This 'digital portfolio' serves dual functions as a learning showcase and a job-search tool, allowing interviewers to fully assess your thinking ability and execution capacity within 5 minutes.",
+  m4_p2:"'Interviewers see dozens of resumes daily. An interactive webpage is the best reason for them to stop and look for 3 more minutes.'",
+  m4_modules:[
+    {num:"M1",icon:"🏠",title:"Home & Value Proposition",timing:"First 10 seconds",desc:"One-sentence positioning + core drive statement + navigation flow. Let interviewers know 'who you are and what problem you care about' in the first second."},
+    {num:"M2",icon:"🌐",title:"Industry Trends & Business Models",timing:"Second 11-60",desc:"Target company BMC visualization + pain point insights + personal rationale. Demonstrates macro vision and independent judgment."},
+    {num:"M3",icon:"🎯",title:"Career Strategy & Skill Mapping",timing:"Minutes 1-3",desc:"JD breakdown table + radar chart (demand vs. current state) + concrete action plan. Shows precise self-awareness."},
+    {num:"M4",icon:"📁",title:"Portfolio & Continuous Improvement",timing:"Minutes 3-5",desc:"Micro-project showcase + feedback improvement journey (v1→criticism→v2). Proves execution capacity through concrete output and iteration records."}
+  ],
+  m4_tools:[
+    {name:"Notion",level:"★☆☆",use:"Quick launch, content-first",note:"Free, easy to update"},
+    {name:"Gamma.app",level:"★☆☆",use:"Visual-rich, presentation style",note:"AI-assisted layout"},
+    {name:"Canva (Website)",level:"★★☆",use:"Design-forward, creative",note:"Rich templates"},
+    {name:"Google Sites",level:"★★☆",use:"Embed Google docs",note:"Free integration"},
+    {name:"HTML/CSS",level:"★★★",use:"Full customization",note:"Bonus: shows tech skills"}
+  ],
+  m4_terms:[
+    {front:"Personal Value Proposition",back:"A one-sentence statement answering: who you are, what problem you solve, and what differentiates you from other candidates. Example: 'A project management candidate with AI application thinking.'"},
+    {front:"Radar Chart",back:"A multi-dimensional comparison visualization tool. In career preparation, used to contrast 'market-required skill distribution' with 'personal current skill distribution'—intuitively showing strengths and gaps."},
+    {front:"Digital Portfolio",back:"An online showcase integrating personal analysis outputs, project work, and career strategy. Serves dual functions of job-search tool and personal brand building, demonstrating deeper thinking than traditional resumes."}
+  ],
+  m4_q:[
+    {q:"The biggest advantage of a digital portfolio over a traditional resume is?",opts:["Can include more photos","Better showcases depth of thinking and execution process","No time needed to create it","Avoids interviews"],ans:1,exp:"Digital portfolios show analytical processes, iterative thinking, and concrete outcomes, giving interviewers a sense of 'thinking depth' that PDF resumes cannot achieve."},
+    {q:"In the 'first 10 seconds,' what do interviewers most want to see?",opts:["Detailed academic history","Who this person is and what problem they care about (positioning)","A complete project list","GPA and scholarship records"],ans:1,exp:"The first 10 seconds is the critical 'worth continuing?' decision point. Clarity of personal positioning determines whether the interviewer reads on."},
+    {q:"A 'Personal Value Proposition' should include which three elements?",opts:["Name, department, GPA","Who you are, what problem you solve, your differentiation","Work experience, skills, languages","Interests, personality, family background"],ans:1,exp:"A Value Proposition must answer: who I am (identity), what I can do (capability), and how I differ from others (differentiation)."},
+    {q:"What is the main use of a radar chart in a digital portfolio?",opts:["Show interest distribution","Visually compare market-required vs. personal skill gaps","Display academic grades","Compare salaries across companies"],ans:1,exp:"Radar charts intuitively show the contrast between 'what the market requires' and 'what I currently have' across multiple skill dimensions."},
+    {q:"What should the fourth module 'Portfolio' most emphasize?",opts:["Only show successful outputs","Show the iterative journey: v1 draft → criticism received → v2 improvement","List all courses taken","Provide thick report documents"],ans:1,exp:"The iteration journey (feedback→improve→output again) is the most compelling demonstration of industry thinking, more persuasive than just showing perfect final results."},
+    {q:"For students without programming skills, which tool is best for quickly building a webpage?",opts:["React + TypeScript","Notion or Gamma.app","C++ programming","Adobe Photoshop"],ans:1,exp:"Notion and Gamma.app are zero-code tools, suitable for students needing quick launch while focusing on content quality."},
+    {q:"The module sequence in a digital portfolio follows what logic?",opts:["Alphabetical order","Random arrangement","Corresponding to interviewer reading psychology (positioning→vision→self-awareness→execution)","Ordered by production difficulty"],ans:2,exp:"The four modules are deliberately sequenced to match interviewer evaluation psychology: confirm positioning → verify vision → check self-awareness → assess execution."},
+    {q:"What is the ultimate purpose of creating a digital portfolio?",opts:["Accumulate social media likes","Directly replace actual job skills","Allow interviewers to fully assess your thinking and execution in 5 minutes","Showcase personal photography"],ans:2,exp:"A digital portfolio is a job-search tool aimed at letting interviewers see a complete picture of your thinking logic, industry knowledge, and execution capacity in limited time."}
+  ],
+  m5_nav:"5. Resistance & Evaluation",m5_title:"Managing Resistance & Measuring Effectiveness",
+  m5_p1:"Any system encounters resistance in real implementation. The value of this motivation transformation system lies not only in 'the learning path when things go smoothly' but also in 'the response mechanism when facing resistance.' We also need clear evaluation metrics to know whether the system is truly working.",
+  m5_p2:"'The robustness of a system lies not in having no problems, but in having a clear response path when problems arise.'",
+  m5_obstacles:[
+    {problem:"Don't know which industry to choose",cause:"Motivation Gap: habituated to waiting for instructions",solution:"Provide 5-10 industry candidate list, let student choose 'the least disliked'—lower barrier (SDT Autonomy)"},
+    {problem:"Completed JD analysis but don't know how to use it",cause:"Value Gap: can't see the meaning of analysis",solution:"Share role model cases: 'After doing this, they got this opportunity' (Self-Efficacy role model learning)"},
+    {problem:"Work not good enough, reluctant to share",cause:"Experience Gap: fear of judgment",solution:"Only require 'minimum viable unit'—one chart is fine, not perfect (SDT Competence)"},
+    {problem:"Revised twice but still the same, very frustrated",cause:"Unclear expectancy path",solution:"Provide concrete evaluation criteria—let students know where the passing line is (Expectancy Theory)"},
+    {problem:"Lost interest midway, started going through the motions",cause:"Topic-motivation connection too weak",solution:"1-on-1 conversation to identify which of the three core needs is not being met (Three Needs Theory)"}
+  ],
+  m5_metrics_title:"Effectiveness Metrics",
+  m5_terms:[
+    {front:"Competence Rating (1-10)",back:"Before and after the course, ask students to rate 'I am confident connecting my learning to my target job.' Calculate average improvement. The most direct quantitative indicator of motivation transformation."},
+    {front:"Narrative Clarity Test",back:"At course end, ask students to describe in 90 seconds: 'who I am, what I care about, what I've produced.' If they can speak fluently, all three gaps have been effectively bridged."},
+    {front:"Iteration Count Tracking",back:"Record how many times each student revises their webpage as a quantitative indicator of 'iterative thinking.' Revision frequency itself reflects how much they value feedback and their willingness to proactively improve."}
+  ],
+  m5_q:[
+    {q:"When a student 'doesn't know which industry to choose,' what is the best intervention?",opts:["Forcibly assign an industry","Remove choice, directly assign topic","Provide candidate list to lower barrier, satisfying Autonomy need","Add punishment mechanisms"],ans:2,exp:"This resistance stems from the Motivation Gap. The intervention should return to SDT's Autonomy need: lower barriers (provide list), not remove choice or force."},
+    {q:"The 'Competence Rating' primarily measures what?",opts:["Student GPA improvement","Student confidence change in connecting abilities to career needs","Teacher satisfaction with teaching","Course attendance"],ans:1,exp:"Competence rating (1-10, before vs. after) is the most direct quantitative indicator of motivation transformation."},
+    {q:"What is the time limit for the 'Narrative Clarity Test'?",opts:["30 seconds","60 seconds","90 seconds","120 seconds"],ans:2,exp:"90 seconds to clearly state 'who I am, what I care about, what I've produced' simulates the self-introduction scenario in interviews."},
+    {q:"Which effectiveness metric is a 'qualitative indicator'?",opts:["Number of resumes submitted","Number of interviews obtained","Depth of content in student self-reflection reports","Number of webpage revisions"],ans:2,exp:"Self-reflection reports require qualitative analysis and cannot be directly counted. The other three are quantitative."},
+    {q:"The core problem of 'revised twice but still frustrated' is?",opts:["Student not working hard enough","Student doesn't know the evaluation criteria (unclear expectancy path)","Teacher didn't give enough time","Assignment is too difficult"],ans:1,exp:"This stems from Expectancy Theory's broken instrumentality—students don't know 'what kind of improvement' will be recognized. Clear standards are needed."},
+    {q:"When a student 'loses interest midway,' which theory is most appropriate for intervention?",opts:["Self-Efficacy Theory","Expectancy Theory","SDT","Three Needs Theory"],ans:3,exp:"Three Needs Theory helps clarify: which of the student's achievement, affiliation, or power needs is not being satisfied in the current design."},
+    {q:"'Iteration count' as an evaluation metric measures what core capacity?",opts:["Length of study time","Degree of valuing feedback and willingness to proactively improve","Memory capacity","Collaboration skills"],ans:1,exp:"Iteration count reflects not just technical ability but a mindset—willingness to repeatedly improve based on feedback, which is one of the most valued traits in industry."},
+    {q:"The design philosophy of this motivation transformation system most closely resembles?",opts:["Using external pressure to force student action","Making learning easier so students don't need to put in much effort","Creating conditions for students to want to act and grow from within","Using reward/punishment mechanisms to control student behavior"],ans:2,exp:"The system's core is 'creating conditions for internal motivation'—through autonomy, competence, relatedness, role modeling, students are driven to act voluntarily."}
+  ],
+  m6_nav:"6. Resources",m6_title:"Extended Learning Resources",m6_desc:"Curated resources on motivation theories, career preparation, and digital portfolio building.",
+  mlab_nav:"7. Interactive Lab",mlab_title:"Interactive Lab: Motivation Diagnostic Tools",mlab_desc:"Use interactive tools to diagnose your motivation profile, review theory intervention timing, and simulate expectancy calculations.",
+  date:"Version 2026.03.12",
+  copyright:"For Educational Use Only",
+  architect_label:"Architect:",
+  architect_name:"Prof. Shihmin Lo",
+  architect_url:"https://www.ibs.ncnu.edu.tw/index.php/faculty/tenured-professor/299-smlo"
+}
+};
+
+// ── ICONS ───────────────────────────────────────
+const IconBookOpen=({size=24,className=""})=><svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>;
+const IconChevronRight=({size=24,className=""})=><svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><polyline points="9 18 15 12 9 6"/></svg>;
+const IconChevronUp=({size=24,className=""})=><svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><polyline points="18 15 12 9 6 15"/></svg>;
+const IconMenu=({size=24,className=""})=><svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>;
+const IconX=({size=24,className=""})=><svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>;
+const IconMoon=({size=24,className=""})=><svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>;
+const IconSun=({size=24,className=""})=><svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>;
+const IconPlay=({size=24,className=""})=><svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><polygon points="5 3 19 12 5 21 5 3"/></svg>;
+const IconPause=({size=24,className=""})=><svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>;
+const IconSquare=({size=24,className=""})=><svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/></svg>;
+const IconArrowRight=({size=24,className=""})=><svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>;
+const IconActivity=({size=24,className=""})=><svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>;
+const IconGlobe=({size=24,className=""})=><svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>;
+const IconCpu=({size=24,className=""})=><svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><line x1="9" y1="1" x2="9" y2="4"/><line x1="15" y1="1" x2="15" y2="4"/><line x1="9" y1="20" x2="9" y2="23"/><line x1="15" y1="20" x2="15" y2="23"/><line x1="20" y1="9" x2="23" y2="9"/><line x1="20" y1="14" x2="23" y2="14"/><line x1="1" y1="9" x2="4" y2="9"/><line x1="1" y1="14" x2="4" y2="14"/></svg>;
+const IconTrendingUp=({size=24,className=""})=><svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>;
+const IconLayers=({size=24,className=""})=><svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>;
+const IconFlag=({size=24,className=""})=><svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>;
+const IconZap=({size=24,className=""})=><svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>;
+const IconFlask=({size=24,className=""})=><svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M9 3h6m-6 0v6l-4 10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1L15 9V3M9 3H7m8 0h2"/></svg>;
+const IconZapLab=({size=24,className=""})=><svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/><circle cx="18" cy="18" r="3" fill="currentColor" fillOpacity="0.2"/></svg>;
+const IconCheckCircle=({size=24,className=""})=><svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>;
+const IconAlertTriangle=({size=24,className=""})=><svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>;
+
+// ── FlipCard ─────────────────────────────────────
+const FlipCard=({front,back,t})=>{
+  const [flipped,setFlipped]=useState(false);
+  return(
+    <div className="perspective cursor-pointer h-36" onClick={()=>setFlipped(!flipped)}>
+      <div className={`transform-style-3d relative w-full h-full transition-transform duration-500 ${flipped?'rotate-y-180':''}`}>
+        <div className="backface-hidden absolute inset-0 bg-white dark:bg-slate-800 rounded-xl p-4 flex flex-col items-center justify-center border border-slate-200 dark:border-slate-700 shadow-sm">
+          <p className="font-serif font-bold text-center text-[#004030] dark:text-[#D8C3A5] text-sm">{front}</p>
+          <p className="text-xs text-slate-400 mt-2">{t.flip_prompt}</p>
+        </div>
+        <div className="backface-hidden rotate-y-180 absolute inset-0 bg-[#004030] dark:bg-slate-700 rounded-xl p-4 flex items-center justify-center">
+          <p className="text-xs text-center text-[#D8C3A5] dark:text-slate-200 leading-relaxed">{back}</p>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// ── ModuleQuiz ────────────────────────────────────
+const ModuleQuiz=({questions,t,moduleId,onQuizSubmit})=>{
+  const [quizIndices]=useState(()=>[...Array(questions.length).keys()].sort(()=>Math.random()-0.5).slice(0,4));
+  const [selected,setSelected]=useState({});
+  const [submitted,setSubmitted]=useState(false);
+  const quizQs=quizIndices.map(i=>({...questions[i],_idx:i}));
+  const score=submitted?quizQs.filter((q,i)=>selected[i]===q.ans).length:0;
+  const handleSubmit=()=>{if(Object.keys(selected).length<quizQs.length)return;setSubmitted(true);onQuizSubmit(moduleId,score,quizQs.length);};
+  const handleRetry=()=>{setSelected({});setSubmitted(false);};
+  return(
+    <div className="mt-8 bg-slate-50 dark:bg-slate-900 rounded-2xl p-6">
+      <h3 className="font-serif font-bold text-lg text-[#004030] dark:text-[#D8C3A5] mb-6 flex items-center gap-2">
+        <IconActivity size={20}/>{t.quiz_title}
+      </h3>
+      <div className="space-y-6">
+        {quizQs.map((q,qi)=>{
+          const cur=questions[q._idx];
+          return(
+            <div key={qi} className="space-y-2">
+              <p className="font-medium text-slate-800 dark:text-slate-200 text-sm">{qi+1}. {cur.q}</p>
+              <div className="grid gap-2">
+                {cur.opts.map((opt,oi)=>{
+                  let cls="text-left w-full px-4 py-2.5 rounded-lg text-sm border transition-all ";
+                  if(!submitted){cls+=selected[qi]===oi?"border-[#004030] bg-[#004030]/10 text-[#004030] dark:border-[#D8C3A5] dark:bg-[#D8C3A5]/10 dark:text-[#D8C3A5]":"border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:border-[#004030] dark:hover:border-[#D8C3A5]";}
+                  else{if(oi===q.ans)cls+="border-green-500 bg-green-50 dark:bg-green-900/30 text-green-800 dark:text-green-300 font-medium";else if(selected[qi]===oi&&oi!==q.ans)cls+="border-red-400 bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-300";else cls+="border-slate-200 dark:border-slate-700 text-slate-500";}
+                  return<button key={oi} className={cls} disabled={submitted} onClick={()=>!submitted&&setSelected({...selected,[qi]:oi})}>{opt}</button>;
+                })}
+              </div>
+              {submitted&&<p className="text-xs text-slate-500 dark:text-slate-400 mt-1 pl-1">💡 {t.explanation}：{cur.exp}</p>}
+            </div>
+          );
+        })}
+      </div>
+      {!submitted?(
+        <button onClick={handleSubmit} disabled={Object.keys(selected).length<quizQs.length}
+          className="mt-6 w-full py-3 bg-[#004030] dark:bg-[#D8C3A5] text-white dark:text-[#004030] font-bold rounded-xl disabled:opacity-40 hover:bg-[#002b20] dark:hover:bg-white transition-colors">
+          {t.submit}
+        </button>
+      ):(
+        <div className="mt-6 flex items-center justify-between">
+          <p className="font-serif font-bold text-[#004030] dark:text-[#D8C3A5]">{t.score}: {score}/{quizQs.length}</p>
+          <button onClick={handleRetry} className="px-4 py-2 border border-[#004030] dark:border-[#D8C3A5] text-[#004030] dark:text-[#D8C3A5] rounded-lg text-sm hover:bg-[#004030]/5">{t.retry}</button>
+        </div>
+      )}
+    </div>
+  );
+};
+
+// ── LinkCard ──────────────────────────────────────
+const LinkCard=({title,desc,url,tag})=>(
+  <a href={url} target="_blank" rel="noopener noreferrer"
+    className="block p-4 bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-[#004030] dark:hover:border-[#D8C3A5] hover:shadow-md transition-all group">
+    <div className="flex items-start justify-between gap-2">
+      <div>
+        <p className="font-semibold text-slate-800 dark:text-slate-200 group-hover:text-[#004030] dark:group-hover:text-[#D8C3A5] text-sm">{title}</p>
+        <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 leading-relaxed">{desc}</p>
+      </div>
+      {tag&&<span className="shrink-0 text-xs px-2 py-1 bg-[#004030]/10 dark:bg-[#D8C3A5]/10 text-[#004030] dark:text-[#D8C3A5] rounded-full">{tag}</span>}
+    </div>
+  </a>
+);
+
+// ── Lab Components (top-level) ─────────────────────
+
+const MotivationDiagnosisLab=({lang})=>{
+  const labels=lang==='zh'?
+    ["我能說出3個以上感興趣的產業","我曾完成過自主決策的專案","我能將課程連結到具體職缺","面對新任務我傾向主動嘗試","我清楚自身技能與職缺的落差"]:
+    ["I can name 3+ industries I'm interested in","I've completed a self-directed project","I can link courses to specific job requirements","I proactively attempt new tasks","I know my skill gaps vs. job requirements"];
+  const gaps=lang==='zh'?["動機斷層","經驗斷層","價值斷層","動機斷層","價值斷層"]:["Motivation Gap","Experience Gap","Value Gap","Motivation Gap","Value Gap"];
+  const [scores,setScores]=useState([3,3,3,3,3]);
+  const title=lang==='zh'?"🔍 三斷層自我診斷量表":"🔍 Three-Gap Self-Diagnosis";
+  const subtitle=lang==='zh'?"為每項評分（1=完全不符合，5=完全符合），查看你的斷層分佈":"Rate each item (1=Strongly Disagree, 5=Strongly Agree) to see your gap profile";
+  const gapScores={[gaps[0]]:0,[gaps[2]]:0,[gaps[1]]:0};
+  scores.forEach((s,i)=>{gapScores[gaps[i]]=(gapScores[gaps[i]]||0)+s;});
+  const gapData=Object.entries(gapScores).map(([k,v])=>({name:k,val:Math.round(v/2*10)/10,max:10}));
+  const barColor=(v)=>v>=7?"bg-green-500":v>=4?"bg-yellow-500":"bg-red-500";
+  return(
+    <div className="bg-white dark:bg-slate-800 rounded-2xl p-6 border border-slate-200 dark:border-slate-700">
+      <h3 className="font-serif font-bold text-[#004030] dark:text-[#D8C3A5] mb-1">{title}</h3>
+      <p className="text-xs text-slate-500 dark:text-slate-400 mb-5">{subtitle}</p>
+      <div className="space-y-4">
+        {labels.map((label,i)=>(
+          <div key={i}>
+            <div className="flex justify-between items-center mb-1">
+              <span className="text-xs text-slate-600 dark:text-slate-300 flex-1 pr-4">{label}</span>
+              <div className="flex items-center gap-1">
+                {[1,2,3,4,5].map(v=>(
+                  <button key={v} onClick={()=>{const n=[...scores];n[i]=v;setScores(n);}}
+                    className={`w-7 h-7 rounded-lg text-xs font-bold transition-all ${scores[i]===v?'bg-[#004030] dark:bg-[#D8C3A5] text-white dark:text-[#004030]':'bg-slate-100 dark:bg-slate-700 text-slate-500 hover:bg-[#004030]/20'}`}>{v}</button>
+                ))}
+              </div>
+            </div>
+            <div className="text-right"><span className="text-xs text-slate-400">{gaps[i]}</span></div>
+          </div>
+        ))}
+      </div>
+      <div className="mt-6 space-y-3">
+        <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">{lang==='zh'?'斷層強度分析':'Gap Intensity Analysis'}</p>
+        {gapData.map((g,i)=>(
+          <div key={i} className="flex items-center gap-3">
+            <span className="text-xs text-slate-600 dark:text-slate-300 w-24 shrink-0">{g.name}</span>
+            <div className="flex-1 bg-slate-100 dark:bg-slate-700 rounded-full h-3">
+              <div className={`h-3 rounded-full transition-all ${barColor(g.val)}`} style={{width:`${g.val/10*100}%`}}/>
+            </div>
+            <span className="text-xs font-bold text-slate-600 dark:text-slate-300 w-8">{g.val}/10</span>
+          </div>
+        ))}
+        <p className="text-xs text-slate-400 italic">{lang==='zh'?'分數越高代表此斷層越嚴重':'Higher score = more severe gap'}</p>
+      </div>
+    </div>
+  );
+};
+
+const ExpectancyCalcLab=({lang})=>{
+  const [E,setE]=useState(5);
+  const [I,setI]=useState(5);
+  const [V,setV]=useState(5);
+  const M=Math.round(E*I*V/100*100)/100;
+  const maxM=125;
+  const pct=Math.min(100,Math.round(M/maxM*100));
+  const label=lang==='zh'?["期望值（努力→成果）","工具性（成果→獎勵）","誘因值（獎勵的意義）"]:["Expectancy (Effort→Result)","Instrumentality (Result→Reward)","Valence (Reward Meaning)"];
+  const title=lang==='zh'?"⚡ 期望理論動機計算器":"⚡ Expectancy Theory Calculator";
+  const subtitle=lang==='zh'?"動機強度 = 期望值 × 工具性 × 誘因值（每項 1-5 分）":"Motivation = Expectancy × Instrumentality × Valence (each 1-5)";
+  const mLabel=lang==='zh'?"動機強度":"Motivation Score";
+  const color=pct>=70?"text-green-600 dark:text-green-400":pct>=40?"text-yellow-600 dark:text-yellow-400":"text-red-600 dark:text-red-400";
+  return(
+    <div className="bg-white dark:bg-slate-800 rounded-2xl p-6 border border-slate-200 dark:border-slate-700">
+      <h3 className="font-serif font-bold text-[#004030] dark:text-[#D8C3A5] mb-1">{title}</h3>
+      <p className="text-xs text-slate-500 dark:text-slate-400 mb-5">{subtitle}</p>
+      {[[E,setE,label[0]],[I,setI,label[1]],[V,setV,label[2]]].map(([val,setter,lbl],i)=>(
+        <div key={i} className="mb-4">
+          <div className="flex justify-between mb-1">
+            <span className="text-xs text-slate-600 dark:text-slate-300">{lbl}</span>
+            <span className="text-xs font-bold text-[#004030] dark:text-[#D8C3A5]">{val}/5</span>
+          </div>
+          <input type="range" min="1" max="5" value={val} onChange={e=>setter(+e.target.value)}
+            className="w-full accent-[#004030]"/>
+        </div>
+      ))}
+      <div className="mt-4 p-4 bg-slate-50 dark:bg-slate-900 rounded-xl text-center">
+        <p className="text-xs text-slate-500 mb-1">{mLabel}</p>
+        <p className={`text-3xl font-black font-serif ${color}`}>{M}</p>
+        <div className="mt-2 bg-slate-200 dark:bg-slate-700 rounded-full h-2">
+          <div className={`h-2 rounded-full transition-all ${pct>=70?"bg-green-500":pct>=40?"bg-yellow-500":"bg-red-500"}`} style={{width:`${pct}%`}}/>
+        </div>
+        <p className="text-xs text-slate-400 mt-1">{pct}% {lang==='zh'?'最大動機值':'of max'}</p>
+      </div>
+    </div>
+  );
+};
+
+const TheoryTimelineLab=({lang})=>{
+  const [active,setActive]=useState(0);
+  const items=lang==='zh'?[
+    {week:"週 1-2",theory:"自我決定論（SDT）",color:"bg-[#004030]",focus:"解凍與賦權",action:"自主選擇產業、降低選擇門檻、建立安全感"},
+    {week:"週 3-5",theory:"自我效能理論",color:"bg-[#048A81]",focus:"擴增認知",action:"分析JD與BMC、楷模學習、微型成功累積"},
+    {week:"週 6-8",theory:"期望理論",color:"bg-[#54C6EB]",focus:"建構微型成功",action:"技能落差可視化、打通努力到職涯優勢的路徑"},
+    {week:"週 9+",theory:"三需求理論",color:"bg-[#D8C3A5]",focus:"個人化策略",action:"釐清成就/親和/權力需求，制定個人化求職路徑"}
+  ]:[
+    {week:"Week 1-2",theory:"SDT",color:"bg-[#004030]",focus:"Unfreeze & Empower",action:"Autonomous industry choice, lower barriers, build psychological safety"},
+    {week:"Week 3-5",theory:"Self-Efficacy",color:"bg-[#048A81]",focus:"Expand Knowledge",action:"Analyze JD & BMC, role model learning, micro-success accumulation"},
+    {week:"Week 6-8",theory:"Expectancy Theory",color:"bg-[#54C6EB]",focus:"Build Micro-Successes",action:"Visualize skill gaps, open the pathway from effort to career advantage"},
+    {week:"Week 9+",theory:"Three Needs Theory",color:"bg-[#D8C3A5]",focus:"Personalized Strategy",action:"Clarify achievement/affiliation/power needs, develop personalized career path"}
+  ];
+  const title=lang==='zh'?"📅 理論介入時序互動圖":"📅 Theory Intervention Timeline";
+  return(
+    <div className="bg-white dark:bg-slate-800 rounded-2xl p-6 border border-slate-200 dark:border-slate-700">
+      <h3 className="font-serif font-bold text-[#004030] dark:text-[#D8C3A5] mb-5">{title}</h3>
+      <div className="flex gap-2 mb-6 flex-wrap">
+        {items.map((item,i)=>(
+          <button key={i} onClick={()=>setActive(i)}
+            className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all ${active===i?`${item.color} text-white`:'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300'}`}>
+            {item.week}
+          </button>
+        ))}
+      </div>
+      <div className={`${items[active].color} text-white rounded-xl p-5`}>
+        <div className="flex items-center gap-3 mb-3">
+          <span className="text-2xl font-black font-serif">{items[active].week}</span>
+          <div>
+            <p className="font-bold text-sm">{items[active].theory}</p>
+            <p className="text-xs opacity-80">{items[active].focus}</p>
+          </div>
+        </div>
+        <p className="text-sm opacity-90 leading-relaxed">{items[active].action}</p>
+      </div>
+      <div className="mt-4 flex gap-1">
+        {items.map((item,i)=>(
+          <div key={i} className={`flex-1 h-2 rounded-full transition-all ${i<=active?item.color:'bg-slate-100 dark:bg-slate-700'}`}/>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+const NeedsProfileLab=({lang})=>{
+  const [scores,setScores]=useState({ach:3,pow:3,aff:3});
+  const items=lang==='zh'?[
+    {key:"ach",label:"成就需求",desc:"被挑戰性目標驅動，追求超越標準",color:"bg-[#004030]",career:"專案管理、創業、業務"},
+    {key:"pow",label:"權力需求",desc:"希望產生影響力，偏好領導與決策",color:"bg-[#048A81]",career:"管理職、政策、顧問"},
+    {key:"aff",label:"親和需求",desc:"重視人際關係，喜歡合作與和諧",color:"bg-[#54C6EB]",career:"公關、人資、社工"}
+  ]:[
+    {key:"ach",label:"Achievement Need",desc:"Driven by challenging goals, pursuing excellence",color:"bg-[#004030]",career:"PM, Entrepreneurship, Sales"},
+    {key:"pow",label:"Power Need",desc:"Seeks influence, prefers leadership and decision-making",color:"bg-[#048A81]",career:"Management, Policy, Consulting"},
+    {key:"aff",label:"Affiliation Need",desc:"Values relationships, enjoys collaboration and harmony",color:"bg-[#54C6EB]",career:"PR, HR, Social Work"}
+  ];
+  const title=lang==='zh'?"🧭 三需求職涯傾向分析":"🧭 Three Needs Career Profile";
+  const dominant=items.reduce((a,b)=>scores[b.key]>scores[a.key]?b:a);
+  return(
+    <div className="bg-white dark:bg-slate-800 rounded-2xl p-6 border border-slate-200 dark:border-slate-700">
+      <h3 className="font-serif font-bold text-[#004030] dark:text-[#D8C3A5] mb-5">{title}</h3>
+      <div className="space-y-4">
+        {items.map(item=>(
+          <div key={item.key}>
+            <div className="flex justify-between items-center mb-1">
+              <span className="text-sm font-medium text-slate-700 dark:text-slate-300">{item.label}</span>
+              <span className="text-xs font-bold text-[#004030] dark:text-[#D8C3A5]">{scores[item.key]}/5</span>
+            </div>
+            <input type="range" min="1" max="5" value={scores[item.key]}
+              onChange={e=>setScores({...scores,[item.key]:+e.target.value})}
+              className="w-full accent-[#004030] mb-1"/>
+            <p className="text-xs text-slate-400">{item.desc}</p>
+          </div>
+        ))}
+      </div>
+      <div className={`mt-5 ${dominant.color} text-white rounded-xl p-4`}>
+        <p className="text-xs font-bold uppercase tracking-wider opacity-70">{lang==='zh'?'你的主要驅動力':'Your Primary Drive'}</p>
+        <p className="text-xl font-black font-serif mt-1">{dominant.label}</p>
+        <p className="text-xs opacity-80 mt-1">{lang==='zh'?'建議探索職涯方向：':'Suggested career directions:'} {dominant.career}</p>
+      </div>
+    </div>
+  );
+};
+
+// ── Main App ──────────────────────────────────────
+const App=()=>{
+  const [lang,setLang]=useState('zh');
+  const [dark,setDark]=useState(false);
+  const [module,setModule]=useState(0);
+  const [menuOpen,setMenuOpen]=useState(false);
+  const menuRef=useRef(null);
+  const mainRef=useRef(null);
+  // Analytics
+  const [analytics,setAnalytics]=useState(()=>Array.from({length:TOTAL},()=>({time:0,clicks:0,correct:0,answered:0,total:0})));
+  const [aForm,setAForm]=useState({group:'G1',dept:'',id:'',name:''});
+  const timerRef=useRef(null);
+  const prevModule=useRef(0);
+
+  const t=dict[lang];
+
+  // Analytics timer
+  useEffect(()=>{
+    timerRef.current=setInterval(()=>{
+      setAnalytics(prev=>{const n=[...prev];n[module]={...n[module],time:n[module].time+1};return n;});
+    },1000);
+    return()=>clearInterval(timerRef.current);
+  },[module]);
+
+  // Click tracking
+  useEffect(()=>{
+    const el=mainRef.current;
+    if(!el)return;
+    const h=()=>setAnalytics(prev=>{const n=[...prev];n[module]={...n[module],clicks:n[module].clicks+1};return n;});
+    el.addEventListener('click',h);
+    return()=>el.removeEventListener('click',h);
+  },[module]);
+
+  // Outside click menu
+  useEffect(()=>{
+    const h=(e)=>{if(menuRef.current&&!menuRef.current.contains(e.target))setMenuOpen(false);};
+    document.addEventListener('mousedown',h);
+    return()=>document.removeEventListener('mousedown',h);
+  },[]);
+
+  // Dark mode
+  useEffect(()=>{document.documentElement.classList.toggle('dark',dark);},[dark]);
+
+  const handleQuizSubmit=(mid,correct,total)=>{
+    setAnalytics(prev=>{const n=[...prev];n[mid]={...n[mid],correct:n[mid].correct+correct,answered:n[mid].answered+total,total:total};return n;});
+  };
+
+  const goModule=(m)=>{setModule(m);setMenuOpen(false);if(mainRef.current)mainRef.current.scrollTo({top:0,behavior:'smooth'});};
+
+  const navItems=[
+    {label:t.m0_nav,icon:<IconBookOpen size={16}/>},
+    {label:t.m1_nav,icon:<IconAlertTriangle size={16}/>},
+    {label:t.m2_nav,icon:<IconLayers size={16}/>},
+    {label:t.m3_nav,icon:<IconFlag size={16}/>},
+    {label:t.m4_nav,icon:<IconCpu size={16}/>},
+    {label:t.m5_nav,icon:<IconTrendingUp size={16}/>},
+    {label:t.m6_nav,icon:<IconGlobe size={16}/>},
+    {label:t.mlab_nav,icon:<IconZapLab size={16}/>},
+    {label:lang==='zh'?"8. 學習分析":"8. Analytics",icon:<IconActivity size={16}/>}
+  ];
+
+  // TTS
+  const ttsRef=useRef(null);
+  const [speaking,setSpeaking]=useState(false);
+  const getModuleText=()=>{
+    const m=module;
+    if(m===0)return[t.m0_title,t.m0_intro,t.m0_why,t.m0_why_desc].join(' ');
+    if(m===1)return[t.m1_title,t.m1_p1,t.m1_p2,...t.m1_cards.map(c=>c.title+' '+c.desc),...t.m1_terms.map(c=>c.front+' '+c.back)].join(' ');
+    if(m===2)return[t.m2_title,t.m2_p1,t.m2_p2,...t.m2_theories.map(c=>c.title+' '+c.desc),...t.m2_terms.map(c=>c.front+' '+c.back)].join(' ');
+    if(m===3)return[t.m3_title,t.m3_p1,t.m3_p2,...t.m3_stages.map(s=>s.title+' '+s.desc),...t.m3_terms.map(c=>c.front+' '+c.back)].join(' ');
+    if(m===4)return[t.m4_title,t.m4_p1,t.m4_p2,...t.m4_modules.map(c=>c.title+' '+c.desc),...t.m4_terms.map(c=>c.front+' '+c.back)].join(' ');
+    if(m===5)return[t.m5_title,t.m5_p1,t.m5_p2,...t.m5_obstacles.map(o=>o.problem+' '+o.solution),...t.m5_terms.map(c=>c.front+' '+c.back)].join(' ');
+    return t.m6_title+' '+t.m6_desc;
+  };
+  const toggleTTS=()=>{
+    if(!window.speechSynthesis)return;
+    if(speaking){window.speechSynthesis.cancel();setSpeaking(false);return;}
+    const utt=new SpeechSynthesisUtterance(getModuleText());
+    utt.lang=lang==='zh'?'zh-TW':'en-GB';
+    const voices=window.speechSynthesis.getVoices();
+    const preferred=lang==='zh'?voices.find(v=>v.name.includes('Yating')||v.lang==='zh-TW'):voices.find(v=>v.name.includes('Daniel')||v.lang==='en-GB');
+    if(preferred)utt.voice=preferred;
+    utt.onend=()=>setSpeaking(false);
+    window.speechSynthesis.speak(utt);
+    setSpeaking(true);
+    ttsRef.current=utt;
+  };
+
+  const H2=({children})=><h2 className="font-serif font-black text-2xl md:text-3xl text-[#004030] dark:text-[#D8C3A5]">{children}</h2>;
+
+  // ── Render modules ──────────────────────────────
+
+  const renderM0=()=>(
+    <div className="animate-fade-in space-y-10">
+      <div className="bg-[#004030] text-white rounded-2xl p-8 md:p-12">
+        <p className="text-[#D8C3A5] text-sm font-bold uppercase tracking-widest mb-3">{lang==='zh'?'課程總覽':'Course Overview'}</p>
+        <h1 className="font-serif font-black text-3xl md:text-4xl leading-tight mb-4">{t.m0_title}</h1>
+        <p className="text-white/80 text-lg leading-relaxed max-w-2xl">{t.m0_intro}</p>
+        <button onClick={()=>goModule(1)}
+          className="mt-6 inline-flex items-center gap-2 bg-[#D8C3A5] text-[#004030] font-bold px-6 py-3 rounded-xl hover:bg-white transition-colors">
+          {t.m0_start}<IconArrowRight size={18}/>
+        </button>
+      </div>
+      <div>
+        <h2 className="font-serif font-bold text-xl text-[#004030] dark:text-[#D8C3A5] mb-2">{t.m0_why}</h2>
+        <p className="text-slate-600 dark:text-slate-400 leading-relaxed">{t.m0_why_desc}</p>
+      </div>
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        {t.m0_stats.map((s,i)=>(
+          <div key={i} className="bg-white dark:bg-slate-800 rounded-2xl p-5 border border-slate-200 dark:border-slate-700 text-center">
+            <p className="font-serif font-black text-4xl text-[#004030] dark:text-[#D8C3A5]">{s.val}</p>
+            <p className="text-xs text-slate-500 mt-1">{s.label}</p>
+          </div>
+        ))}
+      </div>
+      <div>
+        <h2 className="font-serif font-bold text-xl text-[#004030] dark:text-[#D8C3A5] mb-4">{lang==='zh'?'學習模組':'Learning Modules'}</h2>
+        <div className="grid md:grid-cols-1 gap-3">
+          {t.m0_modules.map((m_,i)=>(
+            <button key={i} onClick={()=>goModule(i+1)}
+              className="flex items-center gap-4 text-left w-full p-4 bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-[#004030] dark:hover:border-[#D8C3A5] hover:shadow-md transition-all group">
+              <span className="font-serif font-black text-2xl text-[#004030]/20 dark:text-[#D8C3A5]/20 group-hover:text-[#004030] dark:group-hover:text-[#D8C3A5] transition-colors">{m_.num}</span>
+              <div className="flex-1">
+                <p className="font-bold text-slate-800 dark:text-slate-200 group-hover:text-[#004030] dark:group-hover:text-[#D8C3A5]">{m_.title}</p>
+                <p className="text-xs text-slate-500 mt-0.5">{m_.desc}</p>
+              </div>
+              <IconChevronRight size={18} className="text-slate-300 group-hover:text-[#004030] dark:group-hover:text-[#D8C3A5]"/>
+            </button>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+
+  const renderM1=()=>(
+    <div className="space-y-8 text-slate-700 dark:text-slate-300 animate-fade-in">
+      <H2>{t.m1_title}</H2>
+      <p className="text-lg leading-relaxed">{t.m1_p1}</p>
+      <p className="p-5 bg-slate-100 dark:bg-slate-800 rounded-xl italic font-serif text-slate-600 dark:text-slate-400 border-l-4 border-[#004030] dark:border-[#D8C3A5]">{t.m1_p2}</p>
+      <div className="grid md:grid-cols-3 gap-4">
+        {t.m1_cards.map((c,i)=>(
+          <div key={i} className="bg-white dark:bg-slate-800 rounded-xl p-5 border border-slate-200 dark:border-slate-700 shadow-sm">
+            <div className="text-3xl mb-3">{c.icon}</div>
+            <h3 className="font-bold text-[#004030] dark:text-[#D8C3A5] mb-2">{c.title}</h3>
+            <p className="text-sm leading-relaxed">{c.desc}</p>
+          </div>
+        ))}
+      </div>
+      <div className="bg-amber-50 dark:bg-amber-900/20 rounded-2xl p-6 border border-amber-200 dark:border-amber-700">
+        <h3 className="font-bold text-amber-800 dark:text-amber-300 mb-4 flex items-center gap-2"><IconCheckCircle size={18}/>{t.m1_diag_title}</h3>
+        <div className="space-y-3">
+          {t.m1_diag.map((item,i)=>(
+            <div key={i} className="flex gap-3 items-start">
+              <span className="shrink-0 w-6 h-6 bg-amber-200 dark:bg-amber-800 rounded-full flex items-center justify-center text-xs font-bold text-amber-800 dark:text-amber-200">{i+1}</span>
+              <div>
+                <p className="text-sm text-slate-700 dark:text-slate-300">{item.q}</p>
+                <span className="text-xs text-amber-600 dark:text-amber-400">→ {item.layer}</span>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+      <div>
+        <h3 className="text-lg font-bold uppercase tracking-wider text-slate-500 mb-4">{t.key_terms}</h3>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {t.m1_terms.map((term,i)=><FlipCard key={i} front={term.front} back={term.back} t={t}/>)}
+        </div>
+      </div>
+      <ModuleQuiz questions={t.m1_q} t={t} moduleId={1} onQuizSubmit={handleQuizSubmit}/>
+    </div>
+  );
+
+  const renderM2=()=>(
+    <div className="space-y-8 text-slate-700 dark:text-slate-300 animate-fade-in">
+      <H2>{t.m2_title}</H2>
+      <p className="text-lg leading-relaxed">{t.m2_p1}</p>
+      <p className="p-5 bg-slate-100 dark:bg-slate-800 rounded-xl italic font-serif text-slate-600 dark:text-slate-400 border-l-4 border-[#004030] dark:border-[#D8C3A5]">{t.m2_p2}</p>
+      <div className="space-y-4">
+        {t.m2_theories.map((th,i)=>(
+          <div key={i} className="flex gap-4 bg-white dark:bg-slate-800 rounded-xl p-5 border border-slate-200 dark:border-slate-700 shadow-sm">
+            <div className="text-3xl shrink-0">{th.icon}</div>
+            <div className="flex-1">
+              <div className="flex flex-wrap items-center gap-2 mb-2">
+                <h3 className="font-bold text-[#004030] dark:text-[#D8C3A5]">{th.title}</h3>
+                <span className="text-xs px-2 py-0.5 bg-[#004030]/10 dark:bg-[#D8C3A5]/10 text-[#004030] dark:text-[#D8C3A5] rounded-full">{th.timing}</span>
+              </div>
+              <p className="text-sm leading-relaxed">{th.desc}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+      <div>
+        <h3 className="text-lg font-bold uppercase tracking-wider text-slate-500 mb-4">{t.key_terms}</h3>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {t.m2_terms.map((term,i)=><FlipCard key={i} front={term.front} back={term.back} t={t}/>)}
+        </div>
+      </div>
+      <ModuleQuiz questions={t.m2_q} t={t} moduleId={2} onQuizSubmit={handleQuizSubmit}/>
+    </div>
+  );
+
+  const renderM3=()=>(
+    <div className="space-y-8 text-slate-700 dark:text-slate-300 animate-fade-in">
+      <H2>{t.m3_title}</H2>
+      <p className="text-lg leading-relaxed">{t.m3_p1}</p>
+      <p className="p-5 bg-slate-100 dark:bg-slate-800 rounded-xl italic font-serif text-slate-600 dark:text-slate-400 border-l-4 border-[#004030] dark:border-[#D8C3A5]">{t.m3_p2}</p>
+      <div className="space-y-4">
+        {t.m3_stages.map((s,i)=>(
+          <div key={i} className={`${s.color} rounded-2xl p-6 text-white`}>
+            <div className="flex flex-wrap items-start gap-4 mb-3">
+              <span className="font-serif font-black text-5xl opacity-30">{s.num}</span>
+              <div className="flex-1">
+                <div className="flex flex-wrap items-center gap-2">
+                  <h3 className="font-bold text-lg">{s.title}</h3>
+                  <span className="text-xs px-2 py-0.5 bg-white/20 rounded-full">{s.weeks}</span>
+                </div>
+                <p className="text-sm opacity-90 mt-1 leading-relaxed">{s.desc}</p>
+              </div>
+            </div>
+            <div className="grid sm:grid-cols-2 gap-3 mt-3">
+              <div className="bg-white/10 rounded-xl p-3">
+                <p className="text-xs font-bold opacity-70 uppercase tracking-wider mb-1">{lang==='zh'?'核心產出物':'Core Output'}</p>
+                <p className="text-sm">{s.output}</p>
+              </div>
+              <div className="bg-white/10 rounded-xl p-3">
+                <p className="text-xs font-bold opacity-70 uppercase tracking-wider mb-1">{lang==='zh'?'檢核方式':'Checkpoint'}</p>
+                <p className="text-sm">{s.check}</p>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+      <div>
+        <h3 className="text-lg font-bold uppercase tracking-wider text-slate-500 mb-4">{t.key_terms}</h3>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {t.m3_terms.map((term,i)=><FlipCard key={i} front={term.front} back={term.back} t={t}/>)}
+        </div>
+      </div>
+      <ModuleQuiz questions={t.m3_q} t={t} moduleId={3} onQuizSubmit={handleQuizSubmit}/>
+    </div>
+  );
+
+  const renderM4=()=>(
+    <div className="space-y-8 text-slate-700 dark:text-slate-300 animate-fade-in">
+      <H2>{t.m4_title}</H2>
+      <p className="text-lg leading-relaxed">{t.m4_p1}</p>
+      <p className="p-5 bg-slate-100 dark:bg-slate-800 rounded-xl italic font-serif text-slate-600 dark:text-slate-400 border-l-4 border-[#004030] dark:border-[#D8C3A5]">{t.m4_p2}</p>
+      <div className="grid md:grid-cols-2 gap-4">
+        {t.m4_modules.map((m_,i)=>(
+          <div key={i} className="bg-white dark:bg-slate-800 rounded-xl p-5 border border-slate-200 dark:border-slate-700 shadow-sm">
+            <div className="flex items-center gap-3 mb-3">
+              <span className="text-2xl">{m_.icon}</span>
+              <div>
+                <span className="text-xs font-bold text-[#004030] dark:text-[#D8C3A5] bg-[#004030]/10 dark:bg-[#D8C3A5]/10 px-2 py-0.5 rounded-full">{m_.num}</span>
+                <p className="font-bold text-slate-800 dark:text-slate-200 mt-1">{m_.title}</p>
+              </div>
+            </div>
+            <p className="text-xs text-amber-600 dark:text-amber-400 mb-2 font-medium">⏱ {m_.timing}</p>
+            <p className="text-sm leading-relaxed">{m_.desc}</p>
+          </div>
+        ))}
+      </div>
+      <div className="bg-slate-50 dark:bg-slate-900 rounded-2xl p-6">
+        <h3 className="font-bold text-[#004030] dark:text-[#D8C3A5] mb-4">{lang==='zh'?'🛠 零門檻工具選項':'🛠 No-Code Tool Options'}</h3>
+        <div className="space-y-3">
+          {t.m4_tools.map((tool,i)=>(
+            <div key={i} className="flex items-center gap-4 bg-white dark:bg-slate-800 rounded-xl p-3 border border-slate-200 dark:border-slate-700">
+              <span className="font-bold text-[#004030] dark:text-[#D8C3A5] w-28 shrink-0">{tool.name}</span>
+              <span className="text-xs text-amber-500 w-16">{tool.level}</span>
+              <span className="text-xs text-slate-600 dark:text-slate-400 flex-1">{tool.use}</span>
+              <span className="text-xs text-slate-400">{tool.note}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+      <div>
+        <h3 className="text-lg font-bold uppercase tracking-wider text-slate-500 mb-4">{t.key_terms}</h3>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {t.m4_terms.map((term,i)=><FlipCard key={i} front={term.front} back={term.back} t={t}/>)}
+        </div>
+      </div>
+      <ModuleQuiz questions={t.m4_q} t={t} moduleId={4} onQuizSubmit={handleQuizSubmit}/>
+    </div>
+  );
+
+  const renderM5=()=>(
+    <div className="space-y-8 text-slate-700 dark:text-slate-300 animate-fade-in">
+      <H2>{t.m5_title}</H2>
+      <p className="text-lg leading-relaxed">{t.m5_p1}</p>
+      <p className="p-5 bg-slate-100 dark:bg-slate-800 rounded-xl italic font-serif text-slate-600 dark:text-slate-400 border-l-4 border-[#004030] dark:border-[#D8C3A5]">{t.m5_p2}</p>
+      <div>
+        <h3 className="font-bold text-[#004030] dark:text-[#D8C3A5] mb-4">{lang==='zh'?'⚠️ 常見阻力與因應策略':'⚠️ Common Obstacles & Strategies'}</h3>
+        <div className="space-y-3">
+          {t.m5_obstacles.map((o,i)=>(
+            <div key={i} className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 overflow-hidden">
+              <div className="bg-red-50 dark:bg-red-900/20 p-4 border-b border-red-100 dark:border-red-800">
+                <p className="font-bold text-red-700 dark:text-red-300 text-sm">❌ {o.problem}</p>
+                <p className="text-xs text-red-500 dark:text-red-400 mt-1">{lang==='zh'?'根因：':'Root cause:'} {o.cause}</p>
+              </div>
+              <div className="p-4">
+                <p className="text-sm text-green-700 dark:text-green-300"><span className="font-bold">✅ {lang==='zh'?'因應策略：':'Strategy:'}</span> {o.solution}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+      <div>
+        <h3 className="font-bold text-[#004030] dark:text-[#D8C3A5] mb-4">📊 {t.m5_metrics_title}</h3>
+        <div className="grid md:grid-cols-3 gap-4">
+          {[
+            {icon:"📏",title:lang==='zh'?'勝任感評分（量化）':'Competence Rating (Quant)',items:lang==='zh'?["課程前後1-10分對比","平均提升幅度計算","每階段結束後蒐集"]:["1-10 scale before/after","Calculate average improvement","Collect after each stage"]},
+            {icon:"🎙️",title:lang==='zh'?'敘事清晰度（質化）':'Narrative Clarity (Qual)',items:lang==='zh'?["90秒自我介紹測試","面試官評語蒐集","反思報告內容分析"]:["90-second self-intro test","Interviewer comment collection","Reflection report analysis"]},
+            {icon:"🔄",title:lang==='zh'?'行為追蹤指標':'Behavioral Metrics',items:lang==='zh'?["網頁修改次數（迭代思維）","投遞履歷與面試數","課後3個月追蹤"]:["Webpage revision count (iteration)","Resumes sent & interviews obtained","3-month post-course tracking"]}
+          ].map((card,i)=>(
+            <div key={i} className="bg-white dark:bg-slate-800 rounded-xl p-5 border border-slate-200 dark:border-slate-700">
+              <div className="text-2xl mb-2">{card.icon}</div>
+              <h4 className="font-bold text-slate-800 dark:text-slate-200 mb-3 text-sm">{card.title}</h4>
+              <ul className="space-y-1">
+                {card.items.map((item,j)=><li key={j} className="text-xs text-slate-500 flex items-start gap-1.5"><span className="text-[#004030] dark:text-[#D8C3A5] mt-0.5">•</span>{item}</li>)}
+              </ul>
+            </div>
+          ))}
+        </div>
+      </div>
+      <div>
+        <h3 className="text-lg font-bold uppercase tracking-wider text-slate-500 mb-4">{t.key_terms}</h3>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {t.m5_terms.map((term,i)=><FlipCard key={i} front={term.front} back={term.back} t={t}/>)}
+        </div>
+      </div>
+      <ModuleQuiz questions={t.m5_q} t={t} moduleId={5} onQuizSubmit={handleQuizSubmit}/>
+    </div>
+  );
+
+  const renderResources=()=>{
+    const mainLinks=lang==='zh'?[
+      {title:"自我決定論官方網站",desc:"Deci & Ryan 研究團隊的SDT理論資源庫，含量表下載",url:"https://selfdeterminationtheory.org/",tag:"SDT"},
+      {title:"Bandura 自我效能研究",desc:"史丹佛大學自我效能理論原始論文與應用研究",url:"https://www.researchgate.net/publication/232524189",tag:"Self-Efficacy"},
+      {title:"Business Model Canvas",desc:"Strategyzer 官方BMC工具與模板下載",url:"https://www.strategyzer.com/",tag:"BMC"},
+      {title:"104人力銀行 JD分析",desc:"台灣最大求職平台，用於練習JD拆解分析",url:"https://www.104.com.tw/",tag:"JD"},
+    ]:[
+      {title:"Self-Determination Theory (SDT)",desc:"Official SDT research website by Deci & Ryan, including scales and resources",url:"https://selfdeterminationtheory.org/",tag:"SDT"},
+      {title:"Bandura Self-Efficacy Research",desc:"Original self-efficacy theory papers and applied research",url:"https://www.researchgate.net/publication/232524189",tag:"Self-Efficacy"},
+      {title:"Business Model Canvas",desc:"Strategyzer official BMC tool and template downloads",url:"https://www.strategyzer.com/",tag:"BMC"},
+      {title:"LinkedIn Jobs",desc:"Practice JD deconstruction analysis with real job postings",url:"https://www.linkedin.com/jobs/",tag:"JD"},
+    ];
+    const other=lang==='zh'?[
+      {cat:"數位作品集工具",icon:"🛠",items:[
+        {title:"Notion",desc:"零門檻頁面製作工具",url:"https://notion.so",tag:"免費"},
+        {title:"Gamma.app",desc:"AI輔助簡報與網頁製作",url:"https://gamma.app",tag:"AI"},
+      ]},
+      {cat:"職涯準備資源",icon:"🎯",items:[
+        {title:"CakeResume",desc:"台灣最佳數位履歷平台",url:"https://www.cakeresume.com/",tag:"履歷"},
+        {title:"Yourator",desc:"新創職缺與職涯社群",url:"https://www.yourator.co/",tag:"新創"},
+      ]}
+    ]:[
+      {cat:"Portfolio Tools",icon:"🛠",items:[
+        {title:"Notion",desc:"Zero-code page builder",url:"https://notion.so",tag:"Free"},
+        {title:"Gamma.app",desc:"AI-assisted presentation and website creation",url:"https://gamma.app",tag:"AI"},
+      ]},
+      {cat:"Career Resources",icon:"🎯",items:[
+        {title:"LinkedIn",desc:"Professional network and career resources",url:"https://www.linkedin.com/",tag:"Network"},
+        {title:"Glassdoor",desc:"Company reviews and interview preparation",url:"https://www.glassdoor.com/",tag:"Research"},
+      ]}
+    ];
+    return(
+      <div className="space-y-10 animate-fade-in">
+        <H2>{t.m6_title}</H2>
+        <p className="text-slate-600 dark:text-slate-400">{t.m6_desc}</p>
+        <div>
+          <h3 className="font-bold text-[#004030] dark:text-[#D8C3A5] mb-4">{lang==='zh'?'核心理論與工具資源':'Core Theory & Tool Resources'}</h3>
+          <div className="grid md:grid-cols-2 gap-3">
+            {mainLinks.map((l,i)=><LinkCard key={i} {...l}/>)}
+          </div>
+        </div>
+        {other.map((sec,si)=>(
+          <div key={si}>
+            <h3 className="flex items-center gap-2 text-base font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wide mb-3">
+              <span>{sec.icon}</span>{sec.cat}
+            </h3>
+            <div className="grid md:grid-cols-2 gap-3">
+              {sec.items.map((l,i)=><LinkCard key={i} {...l}/>)}
+            </div>
+          </div>
+        ))}
+        <div className="bg-[#004030]/5 dark:bg-[#D8C3A5]/5 rounded-xl p-5 border border-[#004030]/20 dark:border-[#D8C3A5]/20">
+          <p className="text-sm text-slate-600 dark:text-slate-400">⚠️ {lang==='zh'?'以上連結僅供教育目的使用。外部網站內容由各網站自行負責，本課程不保證其準確性或時效性。':'Links are provided for educational purposes only. External site content is the responsibility of each respective site. This course does not guarantee accuracy or timeliness.'}</p>
+        </div>
+      </div>
+    );
+  };
+
+  const renderLab=()=>(
+    <div className="space-y-8 animate-fade-in">
+      <H2>{t.mlab_title}</H2>
+      <p className="text-slate-600 dark:text-slate-400">{t.mlab_desc}</p>
+      <MotivationDiagnosisLab lang={lang}/>
+      <div className="grid md:grid-cols-2 gap-6">
+        <ExpectancyCalcLab lang={lang}/>
+        <NeedsProfileLab lang={lang}/>
+      </div>
+      <TheoryTimelineLab lang={lang}/>
+    </div>
+  );
+
+  const renderAnalytics=()=>{
+    const totalTime=analytics.reduce((s,a)=>s+a.time,0);
+    const totalClicks=analytics.reduce((s,a)=>s+a.clicks,0);
+    const totalCorrect=analytics.reduce((s,a)=>s+a.correct,0);
+    const totalAnswered=analytics.reduce((s,a)=>s+a.answered,0);
+    const overallAcc=totalAnswered>0?Math.round(totalCorrect/totalAnswered*100):0;
+    const formFilled=aForm.dept&&aForm.id&&aForm.name;
+    const exportCSV=()=>{
+      if(!formFilled)return;
+      const bom='\uFEFF';
+      const header=`${t.analytics_group},${t.analytics_dept},${t.analytics_id},${t.analytics_name}\n${aForm.group},${aForm.dept},${aForm.id},${aForm.name}\n\n${t.analytics_module},${t.analytics_time}(${t.analytics_sec}),${t.analytics_clicks}(${t.analytics_times}),${t.analytics_correct_ans_total}\n`;
+      const rows=navItems.map((n,i)=>{
+        const a=analytics[i];
+        const acc=a.answered>0?`${a.correct}/${a.answered}/${a.total}`:(t.analytics_no_data);
+        return`${n.label},${a.time},${a.clicks},${acc}`;
+      }).join('\n');
+      const summary=`\n${t.analytics_total_time},${totalTime}\n${t.analytics_total_clicks},${totalClicks}\n${t.analytics_overall_acc},${overallAcc}%`;
+      const blob=new Blob([bom+header+rows+summary],{type:'text/csv;charset=utf-8'});
+      const url=URL.createObjectURL(blob);
+      const a=document.createElement('a');a.href=url;a.download='learning_analytics.csv';a.click();URL.revokeObjectURL(url);
+    };
+    return(
+      <div className="space-y-8 animate-fade-in">
+        <H2>{t.analytics_title}</H2>
+        <p className="text-slate-600 dark:text-slate-400">{t.analytics_desc}</p>
+        <div className="grid grid-cols-3 gap-4">
+          {[
+            {label:t.analytics_total_time,val:`${totalTime}${t.analytics_sec}`},
+            {label:t.analytics_total_clicks,val:`${totalClicks}${t.analytics_times}`},
+            {label:t.analytics_overall_acc,val:`${overallAcc}%`}
+          ].map((s,i)=>(
+            <div key={i} className="bg-white dark:bg-slate-800 rounded-2xl p-5 border border-slate-200 dark:border-slate-700 text-center">
+              <p className="font-serif font-black text-3xl text-[#004030] dark:text-[#D8C3A5]">{s.val}</p>
+              <p className="text-xs text-slate-500 mt-1">{s.label}</p>
+            </div>
+          ))}
+        </div>
+        <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead className="bg-[#004030] text-white">
+                <tr>{[t.analytics_module,`${t.analytics_time}(${t.analytics_sec})`,`${t.analytics_clicks}(${t.analytics_times})`,t.analytics_correct_ans_total].map((h,i)=><th key={i} className="px-4 py-3 text-left text-xs font-bold">{h}</th>)}</tr>
+              </thead>
+              <tbody>
+                {navItems.map((n,i)=>{
+                  const a=analytics[i];
+                  const acc=a.answered>0?`${a.correct}/${a.answered}/${a.total}`:t.analytics_no_data;
+                  return<tr key={i} className={`border-b border-slate-100 dark:border-slate-700 ${i===module?'bg-[#004030]/5 dark:bg-[#D8C3A5]/5':''}`}>
+                    <td className="px-4 py-3 text-slate-700 dark:text-slate-300">{n.label}</td>
+                    <td className="px-4 py-3 text-slate-600 dark:text-slate-400">{a.time}</td>
+                    <td className="px-4 py-3 text-slate-600 dark:text-slate-400">{a.clicks}</td>
+                    <td className="px-4 py-3 text-slate-600 dark:text-slate-400">{acc}</td>
+                  </tr>;
+                })}
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div className="bg-slate-50 dark:bg-slate-900 rounded-2xl p-6">
+          <h3 className="font-bold text-[#004030] dark:text-[#D8C3A5] mb-5">{t.analytics_form_title}</h3>
+          <div className="grid sm:grid-cols-2 gap-4 mb-5">
+            <div>
+              <label className="block text-xs font-bold text-slate-500 mb-1">{t.analytics_group}</label>
+              <select value={aForm.group} onChange={e=>setAForm({...aForm,group:e.target.value})}
+                className="w-full border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 rounded-lg px-3 py-2 text-sm text-slate-700 dark:text-slate-300">
+                {t.group_options.map(g=><option key={g}>{g}</option>)}
+              </select>
+            </div>
+            {[['dept',t.analytics_dept,t.analytics_dept_ph],['id',t.analytics_id,t.analytics_id_ph],['name',t.analytics_name,t.analytics_name_ph]].map(([key,label,ph])=>(
+              <div key={key}>
+                <label className="block text-xs font-bold text-slate-500 mb-1">{label}</label>
+                <input placeholder={ph} value={aForm[key]} onChange={e=>setAForm({...aForm,[key]:e.target.value})}
+                  className="w-full border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 rounded-lg px-3 py-2 text-sm text-slate-700 dark:text-slate-300"/>
+              </div>
+            ))}
+          </div>
+          <button onClick={exportCSV} disabled={!formFilled}
+            className="w-full py-3 bg-[#004030] dark:bg-[#D8C3A5] text-white dark:text-[#004030] font-bold rounded-xl disabled:opacity-40 hover:bg-[#002b20] disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2">
+            <IconActivity size={16}/>{formFilled?t.analytics_export_csv:t.analytics_fill_required}
+          </button>
+        </div>
+      </div>
+    );
+  };
+
+  const renderContent=()=>{
+    switch(module){
+      case 0:return renderM0();
+      case 1:return renderM1();
+      case 2:return renderM2();
+      case 3:return renderM3();
+      case 4:return renderM4();
+      case 5:return renderM5();
+      case 6:return renderResources();
+      case 7:return renderLab();
+      case 8:return renderAnalytics();
+      default:return renderM0();
+    }
+  };
+
+  return(
+    <div className="h-screen flex flex-col bg-[#f4f4f4] dark:bg-[#121212] overflow-x-hidden">
+      {/* Header */}
+      <header className="fixed top-0 left-0 right-0 h-16 z-50 bg-[#004030] flex items-center justify-between px-4 shadow-lg">
+        <div className="flex items-center gap-3">
+          <button className="md:hidden text-[#D8C3A5] hover:text-white p-1" onClick={()=>setMenuOpen(!menuOpen)}>
+            {menuOpen?<IconX size={22}/>:<IconMenu size={22}/>}
+          </button>
+          <button onClick={()=>{window.scrollTo({top:0,behavior:'smooth'});goModule(0);}} className="flex items-center gap-2">
+            <span className="font-serif font-black text-[#D8C3A5] tracking-widest text-xl">ENT</span>
+            <span className="hidden sm:block text-white/70 text-xs font-medium">{lang==='zh'?'動機轉換系統':'Motivation System'}</span>
+          </button>
+        </div>
+        <div className="flex items-center gap-2">
+          <button onClick={toggleTTS} title={t.audio_read}
+            className="p-2 text-[#D8C3A5] hover:text-white transition-colors">
+            {speaking?<IconPause size={20}/>:<IconPlay size={20}/>}
+          </button>
+          <button onClick={()=>setLang(l=>l==='zh'?'en':'zh')}
+            className="px-3 py-1.5 text-xs font-bold border border-[#D8C3A5]/50 text-[#D8C3A5] hover:bg-[#D8C3A5]/10 rounded-lg transition-colors">
+            {lang==='zh'?'EN':'中'}
+          </button>
+          <button onClick={()=>setDark(d=>!d)} className="p-2 text-[#D8C3A5] hover:text-white transition-colors">
+            {dark?<IconSun size={20}/>:<IconMoon size={20}/>}
+          </button>
+        </div>
+      </header>
+
+      {/* Mobile dropdown */}
+      {menuOpen&&(
+        <div ref={menuRef} className="fixed top-16 left-0 right-0 z-[100] bg-[#004030] border-t border-[#D8C3A5]/20 max-h-[calc(100vh-5rem)] overflow-y-auto">
+          {navItems.map((item,i)=>(
+            <button key={i} onClick={()=>goModule(i)}
+              className={`w-full flex items-center gap-3 px-5 py-3.5 text-sm transition-colors ${module===i?'bg-[#D8C3A5]/20 text-[#D8C3A5]':'text-white/70 hover:text-white hover:bg-white/10'}`}>
+              {item.icon}<span>{item.label}</span>
+            </button>
+          ))}
+        </div>
+      )}
+
+      <div className="flex flex-1 overflow-hidden pt-16">
+        {/* Sidebar */}
+        <nav className="hidden md:flex flex-col w-64 shrink-0 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-700 overflow-y-auto">
+          <div className="p-4 space-y-1">
+            {navItems.map((item,i)=>(
+              <button key={i} onClick={()=>goModule(i)}
+                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm transition-all ${module===i?'bg-[#004030] text-white font-semibold':'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-[#004030] dark:hover:text-[#D8C3A5]'}`}>
+                {item.icon}<span>{item.label}</span>
+              </button>
+            ))}
+          </div>
+        </nav>
+
+        {/* Main */}
+        <main ref={mainRef} className="flex-1 overflow-y-auto min-w-0">
+          <div className="max-w-4xl mx-auto p-4 sm:p-6 md:p-8 pb-16">
+            {renderContent()}
+            {/* Bottom nav */}
+            <div className="mt-12 flex justify-between items-center pt-8 border-t border-slate-300 dark:border-slate-700">
+              <button onClick={()=>goModule(Math.max(0,module-1))} disabled={module===0}
+                className="px-6 py-3 font-serif font-bold text-slate-500 hover:text-[#004030] dark:hover:text-[#D8C3A5] disabled:opacity-0 uppercase text-sm tracking-wider flex items-center gap-2">
+                ← {t.nav_prev}
+              </button>
+              <button onClick={()=>goModule(Math.min(TOTAL-1,module+1))} disabled={module===TOTAL-1}
+                className="px-8 py-3 bg-[#004030] dark:bg-[#D8C3A5] text-white dark:text-[#004030] font-serif font-bold hover:bg-[#002b20] dark:hover:bg-white disabled:opacity-0 uppercase text-sm tracking-wider shadow-md flex items-center gap-2 rounded-xl">
+                {t.nav_next}<IconArrowRight size={16}/>
+              </button>
+            </div>
+          </div>
+        </main>
+      </div>
+
+      {/* Footer */}
+      <footer className="h-8 bg-[#004030] flex items-center justify-between px-4 shrink-0">
+        <span className="text-[#D8C3A5]/60 text-xs">{t.date} · {t.copyright}</span>
+        <span className="text-[#D8C3A5]/60 text-xs flex items-center gap-1">
+          Architect:&nbsp;
+          <a href="https://www.ibs.ncnu.edu.tw/index.php/faculty/tenured-professor/299-smlo" target="_blank" rel="noopener noreferrer"
+            className="text-[#D8C3A5] hover:text-white underline underline-offset-2 transition-colors">
+            Prof. Shihmin Lo
+          </a>
+        </span>
+      </footer>
+    </div>
+  );
+};
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>
