@@ -1752,17 +1752,26 @@ const App=()=>{
         </div>
       </header>
 
-      {/* Mobile dropdown */}
-      {menuOpen&&(
-        <div ref={menuRef} className="fixed top-16 left-0 right-0 z-[100] bg-[#004030] border-t border-[#D8C3A5]/20 max-h-[calc(100vh-5rem)] overflow-y-auto">
+      {/* Mobile dropdown — slide down/up with max-height transition */}
+      <div ref={menuRef}
+        className="md:hidden fixed top-16 left-0 right-0 z-[100] bg-[#004030] border-t border-[#D8C3A5]/20 overflow-hidden"
+        style={{
+          maxHeight: menuOpen ? `min(${navItems.length * 56 + 8}px, calc(100vh - 4rem))` : '0px',
+          transition: 'max-height 0.32s cubic-bezier(0.4,0,0.2,1)',
+          overflowY: menuOpen ? 'auto' : 'hidden',
+          boxShadow: menuOpen ? '0 8px 24px rgba(0,0,0,0.35)' : 'none',
+        }}>
+        <div className="py-1">
           {navItems.map((item,i)=>(
             <button key={i} onClick={()=>goModule(i)}
-              className={`w-full flex items-center gap-3 px-5 py-3.5 text-sm transition-colors ${module===i?'bg-[#D8C3A5]/20 text-[#D8C3A5]':'text-white/70 hover:text-white hover:bg-white/10'}`}>
-              {item.icon}<span>{item.label}</span>
+              className={`w-full flex items-center gap-3 px-5 py-3.5 text-sm transition-colors ${module===i?'bg-[#D8C3A5]/20 text-[#D8C3A5] font-semibold':'text-white/70 hover:text-white hover:bg-white/10'}`}>
+              <span className="shrink-0">{item.icon}</span>
+              <span>{item.label}</span>
+              {module===i&&<span className="ml-auto w-1.5 h-1.5 rounded-full bg-[#D8C3A5] shrink-0"/>}
             </button>
           ))}
         </div>
-      )}
+      </div>
 
       <div className="flex flex-1 overflow-hidden pt-16">
         {/* Sidebar */}
