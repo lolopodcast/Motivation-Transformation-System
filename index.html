@@ -171,11 +171,13 @@ zh:{
     {num:"M4",icon:"📁",title:"專案實績與持續改善",timing:"第3-5分鐘",desc:"微型專案展示＋回饋改善歷程（v1→批評→v2）。用具體成果與迭代記錄證明執行力。"}
   ],
   m4_tools:[
-    {name:"Notion",level:"★☆☆",use:"快速上線、內容為主",note:"免費、易更新"},
-    {name:"Gamma.app",level:"★☆☆",use:"視覺效果佳、類簡報風",note:"AI輔助排版"},
-    {name:"Canva（網站）",level:"★★☆",use:"設計感強、創意排版",note:"模板豐富"},
-    {name:"Google Sites",level:"★★☆",use:"嵌入Google文件",note:"免費整合"},
-    {name:"HTML/CSS",level:"★★★",use:"高度客製化",note:"技術力加分"}
+    {name:"ChatGPT",level:"★☆☆",tag:"GenAI",use:"用對話生成網頁草稿與文案",note:"免費版可用",url:"https://chat.openai.com/",guide:["1. 登入後點「New Chat」","2. 輸入提示：「幫我寫一個個人作品集網頁，主題是PM職涯準備，包含自我定位、產業分析、技能落差三個區塊」","3. 複製生成的HTML代碼到Gamma或Notion","4. 追問：「請把第二段改得更簡潔」來迭代優化"]},
+    {name:"Claude",level:"★☆☆",tag:"GenAI",use:"生成結構化內容、優化論述邏輯",note:"免費版可用",url:"https://claude.ai/",guide:["1. 登入後直接在對話框輸入需求","2. 提示範例：「請幫我分析這份JD，整理成軟技能/硬技能/文化線索三欄」","3. 上傳你的JD文字或截圖直接詢問","4. 請Claude協助優化你的價值主張句子"]},
+    {name:"Notion",level:"★☆☆",tag:"無碼",use:"快速上線、結構清晰的作品集",note:"免費、易更新",url:"https://notion.so/",guide:["1. 註冊後選「New Page」→ 選 Template","2. 搜尋「Portfolio」模板套用","3. 用 /heading /image /table 指令新增區塊","4. 右上角「Share」→ 開啟「Share to web」取得連結"]},
+    {name:"Gamma.app",level:"★☆☆",tag:"AI輔助",use:"視覺豐富、類簡報風格網頁",note:"AI一鍵排版",url:"https://gamma.app/",guide:["1. 登入後點「New」→「Generate」","2. 輸入主題：「PM職涯作品集，含產業分析與技能盤點」","3. 選擇版面風格後AI自動生成","4. 直接在畫面上點擊文字即可編輯內容"]},
+    {name:"Canva（網站）",level:"★★☆",tag:"設計",use:"視覺設計感強、模板豐富",note:"免費基本版",url:"https://www.canva.com/websites/",guide:["1. 登入後選「Website」類型","2. 搜尋「Portfolio」選擇喜歡的模板","3. 點擊任何元素直接修改文字與圖片","4. 完成後「Publish」→「Canva domain」免費發佈"]},
+    {name:"Google Sites",level:"★★☆",tag:"整合",use:"與Google文件/試算表無縫整合",note:"完全免費",url:"https://sites.google.com/",guide:["1. 用Google帳號登入，點「新增空白網站」","2. 插入→「Google雲端硬碟」直接嵌入報告與圖表","3. 「主題」可一鍵更換配色與字型","4. 點「發佈」取得個人網址分享給面試官"]},
+    {name:"HTML/CSS",level:"★★★",tag:"技術",use:"完全客製化，技術力加分",note:"可請GenAI代寫",url:"https://developer.mozilla.org/zh-TW/docs/Learn",guide:["1. 用ChatGPT或Claude生成完整HTML代碼","2. 存為 index.html，用瀏覽器開啟預覽","3. 上傳至 GitHub Pages（免費）取得網址","4. 展示「我用AI工具協作開發」本身就是加分點"]}
   ],
   m4_terms:[
     {front:"個人價值主張（Value Proposition）",back:"用一句話清楚說明：你是誰、你能解決什麼問題、你與其他候選人的差異在哪裡。例：「具備AI應用思維的專案管理儲備人才」。"},
@@ -197,11 +199,26 @@ zh:{
   m5_p1:"任何系統在實際執行時都會遇到阻力。這套動機轉換系統的價值，不只在於「順利時的學習路徑」，更在於「遇到阻力時的回應機制」。同時，我們需要明確的評估指標，才能知道這套系統是否真正發揮了效果。",
   m5_p2:"「系統的健壯性不在於沒有問題，而在於遇到問題時有清晰的應對路徑。」",
   m5_obstacles:[
-    {problem:"不知道要選哪個產業",cause:"動機斷層：習慣等待指示",solution:"提供5-10個產業候選清單，讓學生選「最不討厭的」，降低選擇門檻（SDT自主性）"},
-    {problem:"做了JD分析但不知如何使用",cause:"價值斷層：看不見分析的意義",solution:"分享楷模案例：「這樣做之後，拿到了什麼機會」（自我效能楷模學習）"},
-    {problem:"作品不夠好不想分享",cause:"經驗斷層：害怕被評判",solution:"只要求展示「最小可展示單元」，一張圖表即可，不求完美（SDT勝任感）"},
-    {problem:"改了兩版還是一樣，很挫折",cause:"期望路徑不清楚",solution:"提供目標職缺的具體評審標準，讓學生知道及格線在哪裡（期望理論）"},
-    {problem:"中途失去興趣，開始敷衍",cause:"選題與個人動機連結不強",solution:"一對一談話，重新確認三需求中哪個核心驅動力沒被滿足（三需求理論）"}
+    {problem:"不知道要選哪個產業",cause:"動機斷層：習慣等待指示",solution:"提供5-10個產業候選清單，讓學生選「最不討厭的」，降低選擇門檻（SDT自主性）",
+     theory:"SDT 自主性",theoryColor:"bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-300",
+     reflect:["你上次「主動選擇」一件事是什麼時候？當時的感受如何？","如果沒有任何限制，你最想了解哪個產業的運作方式？","你現在對哪個產業的新聞或動態最感興趣，即使只是偶爾會看？"],
+     action_ph:"我打算這週先了解___這個產業，方式是___"},
+    {problem:"做了JD分析但不知如何使用",cause:"價值斷層：看不見分析的意義",solution:"分享楷模案例：「這樣做之後，拿到了什麼機會」（自我效能楷模學習）",
+     theory:"自我效能 楷模學習",theoryColor:"bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300",
+     reflect:["你分析完JD後，有沒有哪一個「技能要求」讓你想到自己做過的事？","如果請你用一句話描述JD分析後的發現，你會怎麼說？","你認識或聽說過有人靠類似分析拿到機會嗎？那個故事對你有沒有影響？"],
+     action_ph:"我在JD中發現___這個要求，對應我曾做過___"},
+    {problem:"作品不夠好不想分享",cause:"經驗斷層：害怕被評判",solution:"只要求展示「最小可展示單元」，一張圖表即可，不求完美（SDT勝任感）",
+     theory:"SDT 勝任感",theoryColor:"bg-purple-100 text-purple-700 dark:bg-purple-900/40 dark:text-purple-300",
+     reflect:["你認為「夠好」的標準是從哪裡來的？是你自己的標準，還是你想像中別人的期待？","你的作品中，有沒有哪怕一個部分是你覺得「還不錯」的？","如果你只展示一張圖或一段話，你最想讓別人看到什麼？"],
+     action_ph:"我願意先分享___這個部分，因為它展示了我___"},
+    {problem:"改了兩版還是一樣，很挫折",cause:"期望路徑不清楚",solution:"提供目標職缺的具體評審標準，讓學生知道及格線在哪裡（期望理論）",
+     theory:"期望理論 工具性",theoryColor:"bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300",
+     reflect:["你知道「改好」的具體標準是什麼嗎？如果不清楚，你可以向誰確認？","你上一版修改了什麼？回饋的重點是什麼？這兩者有沒有對應？","如果請你用三個形容詞描述你希望最終作品呈現的樣子，你會用哪三個？"],
+     action_ph:"下一版我要具體改善___，判斷標準是___"},
+    {problem:"中途失去興趣，開始敷衍",cause:"選題與個人動機連結不強",solution:"一對一談話，重新確認三需求中哪個核心驅動力沒被滿足（三需求理論）",
+     theory:"三需求理論",theoryColor:"bg-rose-100 text-rose-700 dark:bg-rose-900/40 dark:text-rose-300",
+     reflect:["你是在哪個節點開始覺得「沒意思」的？那個節點發生了什麼事？","你現在做這件事，最大的「不滿意」是什麼？是方向不對、方法不對，還是目標不夠清楚？","如果把這個任務改成完全你自己決定的方式來做，你會怎麼做？"],
+     action_ph:"重新讓我感到有動力的方式是___，我這週要試試___"}
   ],
   m5_metrics_title:"成效評估指標",
   m5_terms:[
@@ -360,11 +377,13 @@ en:{
     {num:"M4",icon:"📁",title:"Portfolio & Continuous Improvement",timing:"Minutes 3-5",desc:"Micro-project showcase + feedback improvement journey (v1→criticism→v2). Proves execution capacity through concrete output and iteration records."}
   ],
   m4_tools:[
-    {name:"Notion",level:"★☆☆",use:"Quick launch, content-first",note:"Free, easy to update"},
-    {name:"Gamma.app",level:"★☆☆",use:"Visual-rich, presentation style",note:"AI-assisted layout"},
-    {name:"Canva (Website)",level:"★★☆",use:"Design-forward, creative",note:"Rich templates"},
-    {name:"Google Sites",level:"★★☆",use:"Embed Google docs",note:"Free integration"},
-    {name:"HTML/CSS",level:"★★★",use:"Full customization",note:"Bonus: shows tech skills"}
+    {name:"ChatGPT",level:"★☆☆",tag:"GenAI",use:"Generate webpage drafts and copy via conversation",note:"Free tier available",url:"https://chat.openai.com/",guide:["1. Log in and click 'New Chat'","2. Prompt: 'Help me write a personal portfolio webpage about PM career prep, with sections on self-positioning, industry analysis, and skill gaps'","3. Copy the generated HTML into Gamma or Notion","4. Follow up: 'Make the second paragraph more concise' to iterate"]},
+    {name:"Claude",level:"★☆☆",tag:"GenAI",use:"Structure content and sharpen argumentative logic",note:"Free tier available",url:"https://claude.ai/",guide:["1. Log in and type your request directly","2. Example prompt: 'Analyze this JD and organize it into soft skills / hard skills / culture clues'","3. Upload your JD text or screenshot and ask directly","4. Ask Claude to refine your value proposition sentence"]},
+    {name:"Notion",level:"★☆☆",tag:"No-Code",use:"Clean, structured portfolio that's easy to update",note:"Free, easy to update",url:"https://notion.so/",guide:["1. Sign up → 'New Page' → browse Templates","2. Search 'Portfolio' and apply a template","3. Use /heading /image /table commands to add blocks","4. Top-right 'Share' → enable 'Share to web' for a public link"]},
+    {name:"Gamma.app",level:"★☆☆",tag:"AI-Assisted",use:"Visually rich, presentation-style webpages",note:"AI auto-layout",url:"https://gamma.app/",guide:["1. Log in → 'New' → 'Generate'","2. Enter topic: 'PM career portfolio with industry analysis and skill mapping'","3. Choose a visual style and AI generates the layout","4. Click any text directly on screen to edit content"]},
+    {name:"Canva (Website)",level:"★★☆",tag:"Design",use:"Strong visual design, rich templates",note:"Free basic plan",url:"https://www.canva.com/websites/",guide:["1. Log in and select 'Website' type","2. Search 'Portfolio' and pick a template","3. Click any element to edit text and images","4. Click 'Publish' → 'Canva domain' to publish for free"]},
+    {name:"Google Sites",level:"★★☆",tag:"Integration",use:"Seamlessly embeds Google Docs and Sheets",note:"Completely free",url:"https://sites.google.com/",guide:["1. Log in with Google account, click 'New blank site'","2. Insert → 'Google Drive' to embed reports and charts","3. 'Theme' changes color scheme and fonts in one click","4. Click 'Publish' to get a shareable URL for interviewers"]},
+    {name:"HTML/CSS",level:"★★★",tag:"Technical",use:"Full customization, demonstrates technical ability",note:"Let GenAI write it",url:"https://developer.mozilla.org/en-US/docs/Learn",guide:["1. Use ChatGPT or Claude to generate complete HTML code","2. Save as index.html and open in browser to preview","3. Upload to GitHub Pages (free) to get a public URL","4. Showcasing 'I built this with AI collaboration' is itself a bonus point"]}
   ],
   m4_terms:[
     {front:"Personal Value Proposition",back:"A one-sentence statement answering: who you are, what problem you solve, and what differentiates you from other candidates. Example: 'A project management candidate with AI application thinking.'"},
@@ -385,11 +404,26 @@ en:{
   m5_p1:"Any system encounters resistance in real implementation. The value of this motivation transformation system lies not only in 'the learning path when things go smoothly' but also in 'the response mechanism when facing resistance.' We also need clear evaluation metrics to know whether the system is truly working.",
   m5_p2:"'The robustness of a system lies not in having no problems, but in having a clear response path when problems arise.'",
   m5_obstacles:[
-    {problem:"Don't know which industry to choose",cause:"Motivation Gap: habituated to waiting for instructions",solution:"Provide 5-10 industry candidate list, let student choose 'the least disliked'—lower barrier (SDT Autonomy)"},
-    {problem:"Completed JD analysis but don't know how to use it",cause:"Value Gap: can't see the meaning of analysis",solution:"Share role model cases: 'After doing this, they got this opportunity' (Self-Efficacy role model learning)"},
-    {problem:"Work not good enough, reluctant to share",cause:"Experience Gap: fear of judgment",solution:"Only require 'minimum viable unit'—one chart is fine, not perfect (SDT Competence)"},
-    {problem:"Revised twice but still the same, very frustrated",cause:"Unclear expectancy path",solution:"Provide concrete evaluation criteria—let students know where the passing line is (Expectancy Theory)"},
-    {problem:"Lost interest midway, started going through the motions",cause:"Topic-motivation connection too weak",solution:"1-on-1 conversation to identify which of the three core needs is not being met (Three Needs Theory)"}
+    {problem:"Don't know which industry to choose",cause:"Motivation Gap: habituated to waiting for instructions",solution:"Provide 5-10 industry candidate list, let student choose 'the least disliked'—lower barrier (SDT Autonomy)",
+     theory:"SDT Autonomy",theoryColor:"bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-300",
+     reflect:["When was the last time you proactively chose something? How did it feel?","If there were no restrictions at all, which industry would you most want to understand?","Which industry's news do you find yourself occasionally reading, even without a reason?"],
+     action_ph:"This week I plan to explore ___ industry by doing ___"},
+    {problem:"Completed JD analysis but don't know how to use it",cause:"Value Gap: can't see the meaning of analysis",solution:"Share role model cases: 'After doing this, they got this opportunity' (Self-Efficacy role model learning)",
+     theory:"Self-Efficacy Modeling",theoryColor:"bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300",
+     reflect:["After analyzing the JD, did any skill requirement remind you of something you've actually done?","If you had to summarize your JD analysis in one sentence, what would you say?","Do you know anyone who used a similar analysis to land an opportunity? Did that story affect you?"],
+     action_ph:"In the JD I found ___ requirement, which connects to my experience of ___"},
+    {problem:"Work not good enough, reluctant to share",cause:"Experience Gap: fear of judgment",solution:"Only require 'minimum viable unit'—one chart is fine, not perfect (SDT Competence)",
+     theory:"SDT Competence",theoryColor:"bg-purple-100 text-purple-700 dark:bg-purple-900/40 dark:text-purple-300",
+     reflect:["Where does your 'good enough' standard come from? Your own judgment, or what you imagine others expect?","Is there even one part of your work that you feel is 'not bad'?","If you could only show one chart or paragraph, what would you most want people to see?"],
+     action_ph:"I'm willing to first share ___ because it shows my ___"},
+    {problem:"Revised twice but still the same, very frustrated",cause:"Unclear expectancy path",solution:"Provide concrete evaluation criteria—let students know where the passing line is (Expectancy Theory)",
+     theory:"Expectancy Instrumentality",theoryColor:"bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300",
+     reflect:["Do you know the concrete standard for 'improved'? If not, who can you confirm it with?","What did you change in the last version? What was the key feedback? Do these two align?","If you described your ideal final output in three adjectives, what would they be?"],
+     action_ph:"In the next version I will specifically improve ___, and judge success by ___"},
+    {problem:"Lost interest midway, started going through the motions",cause:"Topic-motivation connection too weak",solution:"1-on-1 conversation to identify which of the three core needs is not being met (Three Needs Theory)",
+     theory:"Three Needs Theory",theoryColor:"bg-rose-100 text-rose-700 dark:bg-rose-900/40 dark:text-rose-300",
+     reflect:["At which point did you start feeling 'this is pointless'? What happened at that point?","What's your biggest 'dissatisfaction' right now—wrong direction, wrong method, or unclear goal?","If you could do this task entirely your own way, how would you do it?"],
+     action_ph:"What would re-energize me is ___, and I'll try ___ this week"}
   ],
   m5_metrics_title:"Effectiveness Metrics",
   m5_terms:[
@@ -693,6 +727,194 @@ const NeedsProfileLab=({lang})=>{
   );
 };
 
+// ── ObstacleCards ──────────────────────────────────
+const ObstacleCards=({obstacles,lang})=>{
+  const [open,setOpen]=useState(null);
+  const [checked,setChecked]=useState({});
+  const [actions,setActions]=useState({});
+  const [reflectStep,setReflectStep]=useState({});
+  const toggleCheck=(i)=>setChecked(c=>({...c,[i]:!c[i]}));
+  const checkedCount=Object.values(checked).filter(Boolean).length;
+  const label_encountered=lang==='zh'?"我遇過這個狀況":"I've experienced this";
+  const label_reflect=lang==='zh'?'💬 引導反思問題':'💬 Reflection Prompts';
+  const label_action=lang==='zh'?'✍️ 我的行動承諾':'✍️ My Action Commitment';
+  const label_action_hint=lang==='zh'?'寫下你打算怎麼做（只給自己看）':'Write what you plan to do (just for yourself)';
+  const label_prev=lang==='zh'?'上一題':'Prev';
+  const label_next=lang==='zh'?'下一題':'Next';
+  const label_done=lang==='zh'?'完成反思 ✓':'Done ✓';
+  const label_summary=lang==='zh'?`你勾選了 ${checkedCount} 個曾遇過的阻力`:`You've identified ${checkedCount} obstacle(s) you've faced`;
+
+  return(
+    <div className="space-y-3">
+      {/* Summary bar */}
+      {checkedCount>0&&(
+        <div className="flex items-center gap-2 px-4 py-2.5 bg-[#004030]/10 dark:bg-[#D8C3A5]/10 rounded-xl">
+          <span className="text-lg">🎯</span>
+          <p className="text-sm font-medium text-[#004030] dark:text-[#D8C3A5]">{label_summary}</p>
+        </div>
+      )}
+
+      {obstacles.map((o,i)=>{
+        const isOpen=open===i;
+        const isChecked=!!checked[i];
+        const step=reflectStep[i]||0;
+        return(
+          <div key={i} className={`rounded-xl border overflow-hidden transition-all ${isChecked?'border-[#004030] dark:border-[#D8C3A5]':'border-slate-200 dark:border-slate-700'}`}>
+
+            {/* Header row — problem + checkbox */}
+            <div className={`p-4 ${isChecked?'bg-[#004030]/5 dark:bg-[#D8C3A5]/5':'bg-red-50 dark:bg-red-900/20'}`}>
+              <div className="flex items-start gap-3">
+                <button onClick={()=>toggleCheck(i)}
+                  className={`mt-0.5 shrink-0 w-5 h-5 rounded border-2 flex items-center justify-center transition-all ${isChecked?'bg-[#004030] dark:bg-[#D8C3A5] border-[#004030] dark:border-[#D8C3A5]':'border-slate-400 dark:border-slate-500'}`}>
+                  {isChecked&&<svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="white" strokeWidth="2" strokeLinecap="round"/></svg>}
+                </button>
+                <div className="flex-1">
+                  <div className="flex flex-wrap items-center gap-2 mb-1">
+                    <p className="font-bold text-red-700 dark:text-red-300 text-sm">❌ {o.problem}</p>
+                    <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${o.theoryColor}`}>{o.theory}</span>
+                  </div>
+                  <p className="text-xs text-red-500 dark:text-red-400">{lang==='zh'?'根因：':'Root cause:'} {o.cause}</p>
+                  <button onClick={()=>toggleCheck(i)} className="text-xs text-slate-500 dark:text-slate-400 mt-1 hover:text-[#004030] dark:hover:text-[#D8C3A5]">
+                    {isChecked?'✓ '+label_encountered:'☐ '+label_encountered}
+                  </button>
+                </div>
+                <button onClick={()=>setOpen(isOpen?null:i)}
+                  className="shrink-0 text-slate-400 hover:text-[#004030] dark:hover:text-[#D8C3A5] transition-colors p-1">
+                  <span className={`block transition-transform duration-200 text-lg leading-none ${isOpen?'rotate-180':''}`}>▾</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Strategy row — always visible */}
+            <div className="px-4 py-3 bg-white dark:bg-slate-800 border-t border-slate-100 dark:border-slate-700">
+              <p className="text-sm text-green-700 dark:text-green-300">
+                <span className="font-bold">✅ {lang==='zh'?'因應策略：':'Strategy:'}</span> {o.solution}
+              </p>
+            </div>
+
+            {/* Expandable section */}
+            {isOpen&&(
+              <div className="border-t border-slate-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/60 animate-fade-in">
+
+                {/* Reflection prompts — stepper */}
+                <div className="p-4 border-b border-slate-100 dark:border-slate-700">
+                  <p className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-3">{label_reflect}</p>
+                  <div className="bg-white dark:bg-slate-800 rounded-xl p-4 border border-slate-200 dark:border-slate-700 min-h-[72px]">
+                    <p className="text-sm text-slate-700 dark:text-slate-200 leading-relaxed">
+                      <span className="text-[#004030] dark:text-[#D8C3A5] font-bold mr-1">Q{step+1}.</span>
+                      {o.reflect[step]}
+                    </p>
+                  </div>
+                  <div className="flex items-center justify-between mt-3">
+                    <div className="flex gap-1">
+                      {o.reflect.map((_,ri)=>(
+                        <button key={ri} onClick={()=>setReflectStep(s=>({...s,[i]:ri}))}
+                          className={`w-2 h-2 rounded-full transition-all ${step===ri?'bg-[#004030] dark:bg-[#D8C3A5] w-5':'bg-slate-300 dark:bg-slate-600'}`}/>
+                      ))}
+                    </div>
+                    <div className="flex gap-2">
+                      <button onClick={()=>setReflectStep(s=>({...s,[i]:Math.max(0,(s[i]||0)-1)}))}
+                        disabled={step===0}
+                        className="px-3 py-1 text-xs border border-slate-300 dark:border-slate-600 rounded-lg text-slate-500 disabled:opacity-30 hover:border-[#004030] dark:hover:border-[#D8C3A5]">
+                        ← {label_prev}
+                      </button>
+                      {step<o.reflect.length-1?(
+                        <button onClick={()=>setReflectStep(s=>({...s,[i]:Math.min(o.reflect.length-1,(s[i]||0)+1)}))}
+                          className="px-3 py-1 text-xs bg-[#004030] dark:bg-[#D8C3A5] text-white dark:text-[#004030] rounded-lg hover:bg-[#002b20] dark:hover:bg-white">
+                          {label_next} →
+                        </button>
+                      ):(
+                        <span className="px-3 py-1 text-xs bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-300 rounded-lg font-medium">{label_done}</span>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Action commitment input */}
+                <div className="p-4">
+                  <p className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">{label_action}</p>
+                  <p className="text-xs text-slate-400 mb-2">{label_action_hint}</p>
+                  <textarea
+                    value={actions[i]||''}
+                    onChange={e=>setActions(a=>({...a,[i]:e.target.value}))}
+                    placeholder={o.action_ph}
+                    rows={2}
+                    className="w-full text-sm border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-800 rounded-xl px-4 py-3 text-slate-700 dark:text-slate-300 placeholder-slate-300 dark:placeholder-slate-600 resize-none focus:outline-none focus:border-[#004030] dark:focus:border-[#D8C3A5] transition-colors"
+                  />
+                  {actions[i]&&(
+                    <p className="text-xs text-green-600 dark:text-green-400 mt-1.5 flex items-center gap-1">
+                      <IconCheckCircle size={12}/>{lang==='zh'?'已記錄，繼續加油！':'Noted — keep going!'}
+                    </p>
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
+        );
+      })}
+    </div>
+  );
+};
+
+// ── ToolCards ─────────────────────────────────────
+const tagColor={
+  "GenAI":"bg-purple-100 text-purple-700 dark:bg-purple-900/40 dark:text-purple-300",
+  "AI輔助":"bg-purple-100 text-purple-700 dark:bg-purple-900/40 dark:text-purple-300",
+  "AI-Assisted":"bg-purple-100 text-purple-700 dark:bg-purple-900/40 dark:text-purple-300",
+  "無碼":"bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-300",
+  "No-Code":"bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-300",
+  "設計":"bg-pink-100 text-pink-700 dark:bg-pink-900/40 dark:text-pink-300",
+  "Design":"bg-pink-100 text-pink-700 dark:bg-pink-900/40 dark:text-pink-300",
+  "整合":"bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300",
+  "Integration":"bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300",
+  "技術":"bg-slate-200 text-slate-700 dark:bg-slate-700 dark:text-slate-200",
+  "Technical":"bg-slate-200 text-slate-700 dark:bg-slate-700 dark:text-slate-200",
+};
+const ToolCards=({tools,lang})=>{
+  const [open,setOpen]=useState(null);
+  return(
+    <div className="space-y-3">
+      {tools.map((tool,i)=>(
+        <div key={i} className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 overflow-hidden">
+          <button onClick={()=>setOpen(open===i?null:i)}
+            className="w-full flex items-center gap-3 p-4 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors text-left">
+            <div className="flex items-center gap-2 w-36 shrink-0">
+              <span className="font-bold text-[#004030] dark:text-[#D8C3A5] text-sm">{tool.name}</span>
+              {tool.tag&&<span className={`text-xs px-1.5 py-0.5 rounded-full font-medium ${tagColor[tool.tag]||'bg-slate-100 text-slate-600'}`}>{tool.tag}</span>}
+            </div>
+            <span className="text-xs text-amber-500 w-14 shrink-0">{tool.level}</span>
+            <span className="text-xs text-slate-600 dark:text-slate-400 flex-1">{tool.use}</span>
+            <div className="flex items-center gap-2 shrink-0">
+              <span className="text-xs text-slate-400 hidden sm:block">{tool.note}</span>
+              <span className={`text-slate-400 transition-transform duration-200 ${open===i?'rotate-180':''}`}>▾</span>
+            </div>
+          </button>
+          {open===i&&(
+            <div className="border-t border-slate-100 dark:border-slate-700 px-4 pb-4 pt-3 bg-slate-50 dark:bg-slate-900/50 animate-fade-in">
+              <div className="flex items-center justify-between mb-3">
+                <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">{lang==='zh'?'📖 快速使用手冊':'📖 Quick-Start Guide'}</p>
+                <a href={tool.url} target="_blank" rel="noopener noreferrer"
+                  className="flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 bg-[#004030] dark:bg-[#D8C3A5] text-white dark:text-[#004030] rounded-lg hover:bg-[#002b20] dark:hover:bg-white transition-colors">
+                  <IconGlobe size={12}/>
+                  {lang==='zh'?'前往官網':'Visit Site'} ↗
+                </a>
+              </div>
+              <ol className="space-y-2">
+                {tool.guide.map((step,si)=>(
+                  <li key={si} className="flex gap-3 items-start">
+                    <span className="shrink-0 w-5 h-5 bg-[#004030] dark:bg-[#D8C3A5] text-white dark:text-[#004030] rounded-full flex items-center justify-center text-xs font-bold">{si+1}</span>
+                    <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">{step}</p>
+                  </li>
+                ))}
+              </ol>
+            </div>
+          )}
+        </div>
+      ))}
+    </div>
+  );
+};
+
 // ── Main App ──────────────────────────────────────
 const App=()=>{
   const [lang,setLang]=useState('zh');
@@ -854,6 +1076,17 @@ const App=()=>{
             </div>
           ))}
         </div>
+        <button onClick={()=>goModule(7)}
+          className="mt-5 w-full flex items-center justify-between gap-3 px-5 py-4 bg-[#004030] dark:bg-[#D8C3A5] text-white dark:text-[#004030] rounded-xl hover:bg-[#002b20] dark:hover:bg-white transition-colors group">
+          <div className="flex items-center gap-3">
+            <IconZapLab size={20}/>
+            <div className="text-left">
+              <p className="font-bold text-sm">{lang==='zh'?'前往互動實驗室，進行完整斷層診斷':'Go to Interactive Lab for Full Gap Diagnosis'}</p>
+              <p className="text-xs opacity-70 mt-0.5">{lang==='zh'?'可視化你的三斷層強度，即時調整分數查看分佈':'Visualize your gap intensity with interactive sliders'}</p>
+            </div>
+          </div>
+          <IconArrowRight size={18} className="shrink-0 group-hover:translate-x-1 transition-transform"/>
+        </button>
       </div>
       <div>
         <h3 className="text-lg font-bold uppercase tracking-wider text-slate-500 mb-4">{t.key_terms}</h3>
@@ -956,17 +1189,9 @@ const App=()=>{
         ))}
       </div>
       <div className="bg-slate-50 dark:bg-slate-900 rounded-2xl p-6">
-        <h3 className="font-bold text-[#004030] dark:text-[#D8C3A5] mb-4">{lang==='zh'?'🛠 零門檻工具選項':'🛠 No-Code Tool Options'}</h3>
-        <div className="space-y-3">
-          {t.m4_tools.map((tool,i)=>(
-            <div key={i} className="flex items-center gap-4 bg-white dark:bg-slate-800 rounded-xl p-3 border border-slate-200 dark:border-slate-700">
-              <span className="font-bold text-[#004030] dark:text-[#D8C3A5] w-28 shrink-0">{tool.name}</span>
-              <span className="text-xs text-amber-500 w-16">{tool.level}</span>
-              <span className="text-xs text-slate-600 dark:text-slate-400 flex-1">{tool.use}</span>
-              <span className="text-xs text-slate-400">{tool.note}</span>
-            </div>
-          ))}
-        </div>
+        <h3 className="font-bold text-[#004030] dark:text-[#D8C3A5] mb-2">{lang==='zh'?'🛠 零門檻工具選項':'🛠 Tool Options'}</h3>
+        <p className="text-xs text-slate-500 dark:text-slate-400 mb-5">{lang==='zh'?'點擊任一工具卡展開簡易使用手冊':'Click any tool card to expand the quick-start guide'}</p>
+        <ToolCards tools={t.m4_tools} lang={lang}/>
       </div>
       <div>
         <h3 className="text-lg font-bold uppercase tracking-wider text-slate-500 mb-4">{t.key_terms}</h3>
@@ -984,20 +1209,9 @@ const App=()=>{
       <p className="text-lg leading-relaxed">{t.m5_p1}</p>
       <p className="p-5 bg-slate-100 dark:bg-slate-800 rounded-xl italic font-serif text-slate-600 dark:text-slate-400 border-l-4 border-[#004030] dark:border-[#D8C3A5]">{t.m5_p2}</p>
       <div>
-        <h3 className="font-bold text-[#004030] dark:text-[#D8C3A5] mb-4">{lang==='zh'?'⚠️ 常見阻力與因應策略':'⚠️ Common Obstacles & Strategies'}</h3>
-        <div className="space-y-3">
-          {t.m5_obstacles.map((o,i)=>(
-            <div key={i} className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 overflow-hidden">
-              <div className="bg-red-50 dark:bg-red-900/20 p-4 border-b border-red-100 dark:border-red-800">
-                <p className="font-bold text-red-700 dark:text-red-300 text-sm">❌ {o.problem}</p>
-                <p className="text-xs text-red-500 dark:text-red-400 mt-1">{lang==='zh'?'根因：':'Root cause:'} {o.cause}</p>
-              </div>
-              <div className="p-4">
-                <p className="text-sm text-green-700 dark:text-green-300"><span className="font-bold">✅ {lang==='zh'?'因應策略：':'Strategy:'}</span> {o.solution}</p>
-              </div>
-            </div>
-          ))}
-        </div>
+        <h3 className="font-bold text-[#004030] dark:text-[#D8C3A5] mb-2">{lang==='zh'?'⚠️ 常見阻力與因應策略':'⚠️ Common Obstacles & Strategies'}</h3>
+        <p className="text-xs text-slate-500 dark:text-slate-400 mb-4">{lang==='zh'?"勾選你曾遇過的阻力，展開每張卡片進行反思並寫下行動承諾":"Check obstacles you've faced, expand each card to reflect and write your action commitment"}</p>
+        <ObstacleCards obstacles={t.m5_obstacles} lang={lang}/>
       </div>
       <div>
         <h3 className="font-bold text-[#004030] dark:text-[#D8C3A5] mb-4">📊 {t.m5_metrics_title}</h3>
