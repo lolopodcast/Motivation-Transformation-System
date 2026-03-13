@@ -267,7 +267,7 @@ zh:{
   m4_future_title:"🚀 未來展望：數位作品集的進化",
   m4_future_desc:"隨著實體人工智慧（Physical AI）與擴增實境（XR）技術的成熟，未來的數位作品集將不僅展示分析思維，還能嵌入互動式 3D 操作展示、AR/VR 專案導覽，以及人機協作的完整歷程記錄。從現在開始建立迭代思維與數位展示能力，是通往未來的最佳準備。",
   // Footer
-  date:"Version 2026.03.13",
+  date:"Version 2026.03.13b",
   copyright:"For Educational Use Only",
   architect_label:"Architect:",
   architect_name:"Prof. Shihmin Lo",
@@ -495,7 +495,7 @@ en:{
   mlab_collab_desc:"After completing the diagnostics above, find a classmate and compare your results. Discuss why they differ. Research shows that peer support is a key mediating variable in how collaborative learning affects engagement (path coefficient 0.442). Converting personal diagnosis into a collaborative learning trigger multiplies the effect.",
   m4_future_title:"🚀 Future Outlook: Evolution of Digital Portfolios",
   m4_future_desc:"As Physical AI and XR technologies mature, future digital portfolios will go beyond showcasing analytical thinking to embed interactive 3D operation demos, AR/VR project walkthroughs, and complete human-AI collaboration records. Building iterative thinking and digital presentation skills now is the best preparation for that future.",
-  date:"Version 2026.03.13",
+  date:"Version 2026.03.13b",
   copyright:"For Educational Use Only",
   architect_label:"Architect:",
   architect_name:"Prof. Shihmin Lo",
@@ -1129,72 +1129,95 @@ const App=()=>{
   const ttsRef=useRef(null);
   const [speaking,setSpeaking]=useState(false);
   const [ttsPaused,setTtsPaused]=useState(false);
-  const getModuleText=()=>{
+  const getModuleChunks=()=>{
     const m=module;
+    const qLabel=(i)=>`${lang==='zh'?'第':'Q'}${i+1}${lang==='zh'?'題：':': '}`;
     if(m===0)return[
-      t.m0_title, t.m0_intro, t.m0_why, t.m0_why_desc, t.m0_sdl_title, t.m0_sdl_desc,
-      ...t.m0_stats.map(s=>s.val+' '+s.label),
-      ...t.m0_modules.map(mod=>mod.num+'. '+mod.title+'. '+mod.desc)
-    ].join('. ');
+      [t.m0_title, t.m0_intro].join('. '),
+      [t.m0_why, t.m0_why_desc].join('. '),
+      [t.m0_sdl_title, t.m0_sdl_desc].join('. '),
+      t.m0_stats.map(s=>s.val+' '+s.label).join(', '),
+      t.m0_modules.map(mod=>mod.num+'. '+mod.title+'. '+mod.desc).join('. ')
+    ];
     if(m===1)return[
-      t.m1_title, t.m1_p1, t.m1_p2, t.m1_ei_title, t.m1_ei_desc,
-      ...t.m1_cards.map(c=>c.title+'. '+c.desc),
-      t.m1_diag_title,
-      ...t.m1_diag.map((d,i)=>`${lang==='zh'?'第':'Q'}${i+1}${lang==='zh'?'題：':': '}${d.q} ${lang==='zh'?'對應':'→'} ${d.layer}`),
-      t.key_terms,
-      ...t.m1_terms.map(c=>c.front+'. '+c.back),
-      t.quiz_title,
-      ...t.m1_q.map((q,i)=>`${lang==='zh'?'第':'Q'}${i+1}${lang==='zh'?'題：':': '}${q.q}`)
-    ].join('. ');
+      [t.m1_title, t.m1_p1].join('. '),
+      t.m1_p2,
+      t.m1_cards.map(c=>c.title+'. '+c.desc).join('. '),
+      [t.m1_ei_title, t.m1_ei_desc].join('. '),
+      [t.m1_diag_title, ...t.m1_diag.map((d,i)=>qLabel(i)+d.q+' → '+d.layer)].join('. '),
+      [t.key_terms, ...t.m1_terms.map(c=>c.front+'. '+c.back)].join('. '),
+      [t.quiz_title, ...t.m1_q.map((q,i)=>qLabel(i)+q.q)].join('. ')
+    ];
     if(m===2)return[
-      t.m2_title, t.m2_p1, t.m2_p2,
+      [t.m2_title, t.m2_p1].join('. '),
+      t.m2_p2,
       ...t.m2_theories.map(c=>c.title+', '+c.timing+'. '+c.desc),
-      t.key_terms,
-      ...t.m2_terms.map(c=>c.front+'. '+c.back),
-      t.quiz_title,
-      ...t.m2_q.map((q,i)=>`${lang==='zh'?'第':'Q'}${i+1}${lang==='zh'?'題：':': '}${q.q}`)
-    ].join('. ');
+      [t.key_terms, ...t.m2_terms.map(c=>c.front+'. '+c.back)].join('. '),
+      [t.quiz_title, ...t.m2_q.map((q,i)=>qLabel(i)+q.q)].join('. ')
+    ];
     if(m===3)return[
-      t.m3_title, t.m3_p1, t.m3_p2,
-      ...t.m3_stages.map(s=>`${s.title}, ${s.weeks}. ${s.desc}. ${lang==='zh'?'核心產出':'Output'}: ${s.output}. ${lang==='zh'?'檢核':'Checkpoint'}: ${s.check}`),
-      t.key_terms,
-      ...t.m3_terms.map(c=>c.front+'. '+c.back),
-      t.quiz_title,
-      ...t.m3_q.map((q,i)=>`${lang==='zh'?'第':'Q'}${i+1}${lang==='zh'?'題：':': '}${q.q}`)
-    ].join('. ');
+      [t.m3_title, t.m3_p1].join('. '),
+      t.m3_p2,
+      ...t.m3_stages.map(s=>s.title+', '+s.weeks+'. '+s.desc+'. '+(lang==='zh'?'核心產出':'Output')+': '+s.output+'. '+(lang==='zh'?'檢核':'Checkpoint')+': '+s.check),
+      [t.key_terms, ...t.m3_terms.map(c=>c.front+'. '+c.back)].join('. '),
+      [t.quiz_title, ...t.m3_q.map((q,i)=>qLabel(i)+q.q)].join('. ')
+    ];
     if(m===4)return[
-      t.m4_title, t.m4_p1, t.m4_p2, t.m4_future_title, t.m4_future_desc,
-      ...t.m4_modules.map(c=>c.title+', '+c.timing+'. '+c.desc),
-      ...t.m4_tools.map(c=>c.name+': '+c.use+'. '+c.note),
-      t.key_terms,
-      ...t.m4_terms.map(c=>c.front+'. '+c.back),
-      t.quiz_title,
-      ...t.m4_q.map((q,i)=>`${lang==='zh'?'第':'Q'}${i+1}${lang==='zh'?'題：':': '}${q.q}`)
-    ].join('. ');
+      [t.m4_title, t.m4_p1].join('. '),
+      t.m4_p2,
+      t.m4_modules.map(c=>c.title+', '+c.timing+'. '+c.desc).join('. '),
+      t.m4_tools.map(c=>c.name+': '+c.use).join('. '),
+      [t.key_terms, ...t.m4_terms.map(c=>c.front+'. '+c.back)].join('. '),
+      [t.m4_future_title, t.m4_future_desc].join('. '),
+      [t.quiz_title, ...t.m4_q.map((q,i)=>qLabel(i)+q.q)].join('. ')
+    ];
     if(m===5)return[
-      t.m5_title, t.m5_p1, t.m5_p2,
-      ...t.m5_obstacles.map(o=>o.problem+`. ${lang==='zh'?'根因':'Root cause'}: `+o.cause+`. ${lang==='zh'?'你可以這樣做':'You can try'}: `+o.action_strategy+`. ${lang==='zh'?'反思':'Reflection'}: `+o.reflect.join(' ')),
-      t.m5_metrics_title,
-      ...t.m5_terms.map(c=>c.front+'. '+c.back),
-      t.quiz_title,
-      ...t.m5_q.map((q,i)=>`${lang==='zh'?'第':'Q'}${i+1}${lang==='zh'?'題：':': '}${q.q}`)
-    ].join('. ');
-    if(m===6)return[t.m6_title, t.m6_desc,
-      lang==='zh'?'本節提供核心理論、數位作品集工具與職涯準備的精選外部連結，點擊任一連結可開啟外部網站。':'This section provides curated external links for core theories, portfolio tools, and career resources. Click any link to open the external site.'
-    ].join('. ');
-    if(m===7)return[t.mlab_title, t.mlab_desc, t.mlab_collab_title, t.mlab_collab_desc,
-      lang==='zh'?'三斷層自我診斷量表：透過評分了解動機、經驗、價值三個斷層的強度。每題1-5分，分數越高代表該斷層越嚴重。':'Three-Gap Diagnosis: Rate yourself to see your motivation, experience, and value gap intensity. Higher score means more severe gap.',
-      lang==='zh'?'期望理論動機計算器：調整期望值、工具性、誘因值，計算你的動機強度。動機強度低於40%時，專注提升最低的那個維度。':'Expectancy Calculator: Adjust expectancy, instrumentality, and valence. When score is below 40%, focus on the single lowest dimension.',
-      lang==='zh'?'三需求職涯傾向分析：評估成就、權力、親和需求，找出你的主要驅動力與適合職涯方向。真實反映自己最重要。':'Three Needs Profile: Rate achievement, power, and affiliation needs. Honest self-reflection matters most.'
-    ].join('. ');
+      [t.m5_title, t.m5_p1].join('. '),
+      t.m5_p2,
+      ...t.m5_obstacles.map(o=>o.problem+'. '+(lang==='zh'?'根因':'Root cause')+': '+o.cause+'. '+(lang==='zh'?'你可以這樣做':'You can try')+': '+o.action_strategy),
+      [t.m5_metrics_title, ...[
+        lang==='zh'?'勝任感評分：課程前後1到10分對比':'Competence Rating: 1-10 before and after',
+        lang==='zh'?'敘事清晰度：90秒自我介紹測試':'Narrative Clarity: 90-second self-intro test',
+        lang==='zh'?'行為追蹤：網頁修改次數與履歷投遞數':'Behavioral: revision count and resumes sent'
+      ]].join('. '),
+      [t.key_terms, ...t.m5_terms.map(c=>c.front+'. '+c.back)].join('. '),
+      [t.quiz_title, ...t.m5_q.map((q,i)=>qLabel(i)+q.q)].join('. ')
+    ];
+    if(m===6)return[
+      [t.m6_title, t.m6_desc].join('. '),
+      lang==='zh'?'本節提供核心理論、數位作品集工具與職涯準備的精選外部連結。':'This section provides curated external links for core theories, portfolio tools, and career resources.'
+    ];
+    if(m===7)return[
+      [t.mlab_title, t.mlab_desc].join('. '),
+      lang==='zh'?'三斷層自我診斷量表：透過評分了解動機、經驗、價值三個斷層的強度。':'Three-Gap Diagnosis: Rate yourself to see your motivation, experience, and value gap intensity.',
+      lang==='zh'?'期望理論動機計算器：調整期望值、工具性、誘因值，計算你的動機強度。':'Expectancy Calculator: Adjust expectancy, instrumentality, and valence to compute motivation strength.',
+      lang==='zh'?'三需求職涯傾向分析：評估成就、權力、親和需求，找出你的主要驅動力。':'Three Needs Profile: Rate achievement, power, and affiliation needs to find your primary drive.',
+      [t.mlab_collab_title, t.mlab_collab_desc].join('. ')
+    ];
     if(m===8)return[
-      t.analytics_title, t.analytics_desc,
-      lang==='zh'?'上方三個統計卡片顯示：總學習時間、總互動點擊次數，以及主題一到五的整體答對率。':'The three summary cards show total time, total clicks, and overall quiz accuracy for modules 1 to 5.',
-      lang==='zh'?'模組瀏覽時間表：記錄每個分頁的停留秒數與點擊次數。':'Browse time table: records seconds spent and clicks for each module.',
-      lang==='zh'?'測驗記錄表（主題一到五）：顯示每個主題的答對題數、已答題數與總題數，格式為答對斜線已答斜線總題。':'Quiz record table (modules 1-5): shows correct, answered, and total questions in the format correct slash answered slash total.',
-      t.analytics_form_title+lang==='zh'?'：填寫組別、系級、學號、姓名後，可匯出完整 CSV 歷程記錄。':'： Fill in group, department, student ID, and name to unlock the CSV export button.'
-    ].join('. ');
-    return '';
+      [t.analytics_title, t.analytics_desc].join('. '),
+      lang==='zh'?'統計卡片顯示總學習時間、互動次數與答對率。模組瀏覽時間表記錄每個分頁的停留秒數。測驗記錄表顯示主題一到五的答對題數。':'Summary cards show total time, clicks, and quiz accuracy. Browse table records seconds per module. Quiz table shows correct answers for modules 1 to 5.',
+      lang==='zh'?'填寫基本資料後可匯出完整 CSV 歷程記錄。':'Fill in your information to export a complete CSV record.'
+    ];
+    return[''];
+  };
+  const ttsQueueRef=useRef([]);
+  const ttsIndexRef=useRef(0);
+  const playNextChunk=()=>{
+    const chunks=ttsQueueRef.current;
+    const idx=ttsIndexRef.current;
+    if(idx>=chunks.length){setSpeaking(false);setTtsPaused(false);return;}
+    const utt=new SpeechSynthesisUtterance(chunks[idx]);
+    utt.lang=lang==='zh'?'zh-TW':'en-GB';
+    const voices=window.speechSynthesis.getVoices();
+    const preferred=lang==='zh'?voices.find(v=>v.name.includes('Yating')||v.lang==='zh-TW'):voices.find(v=>v.name.includes('Daniel')||v.lang==='en-GB');
+    if(preferred)utt.voice=preferred;
+    utt.onend=()=>{ttsIndexRef.current++;playNextChunk();};
+    utt.onerror=()=>{ttsIndexRef.current++;playNextChunk();};
+    utt.onpause=()=>{setSpeaking(false);};
+    utt.onresume=()=>{setSpeaking(true);};
+    ttsRef.current=utt;
+    window.speechSynthesis.speak(utt);
   };
   const toggleTTS=()=>{
     if(!window.speechSynthesis)return;
@@ -1211,22 +1234,17 @@ const App=()=>{
       return;
     }
     window.speechSynthesis.cancel();
-    const utt=new SpeechSynthesisUtterance(getModuleText());
-    utt.lang=lang==='zh'?'zh-TW':'en-GB';
-    const voices=window.speechSynthesis.getVoices();
-    const preferred=lang==='zh'?voices.find(v=>v.name.includes('Yating')||v.lang==='zh-TW'):voices.find(v=>v.name.includes('Daniel')||v.lang==='en-GB');
-    if(preferred)utt.voice=preferred;
-    utt.onend=()=>{setSpeaking(false);setTtsPaused(false);};
-    utt.onpause=()=>{setSpeaking(false);};
-    utt.onresume=()=>{setSpeaking(true);};
-    window.speechSynthesis.speak(utt);
+    ttsQueueRef.current=getModuleChunks();
+    ttsIndexRef.current=0;
     setSpeaking(true);
     setTtsPaused(false);
-    ttsRef.current=utt;
+    playNextChunk();
   };
   const stopTTS=()=>{
     if(!window.speechSynthesis)return;
     window.speechSynthesis.cancel();
+    ttsQueueRef.current=[];
+    ttsIndexRef.current=0;
     setSpeaking(false);
     setTtsPaused(false);
   };
@@ -1808,9 +1826,12 @@ const App=()=>{
           <button className="md:hidden text-[#D8C3A5] hover:text-white p-1" onClick={()=>setMenuOpen(!menuOpen)}>
             {menuOpen?<IconX size={22}/>:<IconMenu size={22}/>}
           </button>
-          <button onClick={()=>{window.scrollTo({top:0,behavior:'smooth'});goModule(0);}} className="flex items-center gap-2">
+          <button onClick={()=>{if(mainRef.current)mainRef.current.scrollTo({top:0,behavior:'smooth'});}} className="flex items-center gap-2">
             <span className="font-serif font-black text-[#D8C3A5] tracking-widest text-xl">MT</span>
-            <span className="hidden sm:block text-white/70 text-xs font-medium">Motivation Transformation</span>
+            <span className="hidden sm:flex flex-col leading-tight">
+              <span className="text-white/90 text-xs font-bold">{lang==='zh'?'動機轉換系統':'Motivation Transformation'}</span>
+              <span className="text-[#D8C3A5]/70 text-[10px] font-medium">{lang==='zh'?'有目的學習，掌握成功職涯':'Purposeful Learning, Successful Career'}</span>
+            </span>
           </button>
         </div>
         <div className="flex items-center gap-1.5">
