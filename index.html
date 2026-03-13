@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>從內部驅動到外部接軌 · 動機轉換系統</title>
+<title>從內部驅動到外部接軌 · 動機轉換系統 v2</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <link href="https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,400;0,700;1,400&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
 <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
@@ -78,10 +78,14 @@ zh:{
     {num:"05",title:"改變動機的阻力",desc:"常見卡關情境的因應策略，以及如何衡量系統效果"}
   ],
   m0_start:"開始學習 →",
+  m0_sdl_title:"🔬 本課程與自主學習（SDL）的關係",
+  m0_sdl_desc:"本課程的四大動機理論本質上是驅動「自主學習（Self-Directed Learning, SDL）」的心理機制。SDL 是由學習者主動發起、自我調節的過程，對應 Zimmerman 的 SRL 循環（預見→執行→自我反思）。完成這門課，你不只學到職涯策略，更建立了終身受用的自主學習能力——這正是實證研究確認的大學生面對未來最關鍵的素養。",
   // M1
   m1_nav:"1. 三大斷層診斷",m1_title:"認識三大斷層：找出你的卡點",
   m1_p1:"台灣學生的動機系統在進入職場前，通常需要一次徹底的「引擎改裝」。這不是個人問題，而是教育系統設計的結構性後果。長期由外部評量驅動的學習模式，讓我們在面對開放性、無標準答案的產業挑戰時，容易陷入三種典型的斷層困境。",
   m1_p2:"「第一次被問到『你對這個職位有什麼獨特見解？』時，我腦袋一片空白——因為從來沒有人要我自己想答案。」── 典型的動機斷層體驗",
+  m1_ei_title:"⚠️ 高社交力 ≠ 高自主學習力",
+  m1_ei_desc:"實證研究發現一個反直覺現象：有些同學人際能力很強、很受歡迎（高情緒智力），但面對獨立學術任務時反而更容易逃避。如果這像你，這不代表你能力差，而是你的情緒潛能尚未找到正確的學術出口。後續的結構化流程（模組 3）將幫助你把社交優勢轉化為學習動力。",
   m1_cards:[
     {icon:"🔌",title:"動機斷層",desc:"習慣標準答案，缺乏主動探索的內部驅動力量。面對開放問題時容易焦慮，等待指示而非主動行動。"},
     {icon:"🏗️",title:"經驗斷層",desc:"缺乏實務經驗，面對真實產業容易產生自我懷疑。「我沒做過」成為迴避嘗試的理由。"},
@@ -228,7 +232,13 @@ zh:{
      solution:"回到自己的核心驅動力，找到任務與個人需求的交叉點，興趣才能被重新點燃（三需求理論）",
      theory:"三需求理論",theoryColor:"bg-rose-100 text-rose-700 dark:bg-rose-900/40 dark:text-rose-300",
      reflect:["你是在哪個節點開始覺得「沒意思」的？那個節點發生了什麼事？","你現在做這件事，最大的「不滿意」是什麼？是方向不對、方法不對，還是目標不夠清楚？","如果把這個任務改成完全你自己決定的方式來做，你會怎麼做？"],
-     action_ph:"重新讓我感到有動力的方式是___，我這週要試試___"}
+     action_ph:"重新讓我感到有動力的方式是___，我這週要試試___"},
+    {problem:"用 AI 生成了整份分析，但自己其實沒搞懂",cause:"認知卸載：將思考外包給 AI",
+     action_strategy:"關掉 AI，用自己的話重寫分析中最重要的三個發現。如果寫不出來，回到原始資料重新讀一遍。能用自己的話說出來，才是真正理解。",
+     solution:"AI 是工具不是替身。理解的證據是「能用自己的話重述」，而非「AI 幫我寫完了」（自我效能真實基礎）",
+     theory:"自我效能 真實基礎",theoryColor:"bg-cyan-100 text-cyan-700 dark:bg-cyan-900/40 dark:text-cyan-300",
+     reflect:["你上次用 AI 完成作業時，如果不看 AI 的輸出，你能獨立說明結論嗎？","AI 生成的內容中，有哪些部分你其實不確定是否正確？","如果面試官問你『這個分析是怎麼做的？』，你能回答嗎？"],
+     action_ph:"我要用自己的話重寫___，驗證標準是能向同學口頭解釋清楚"}
   ],
   m5_metrics_title:"成效評估指標",
   m5_terms:[
@@ -244,14 +254,20 @@ zh:{
     {q:"「改了兩版還是一樣挫折」這個阻力，最根本的問題是？",opts:["學生不夠努力","學生不知道評審標準在哪裡（期望路徑不清）","教師沒有給足夠時間","作業太難"],ans:1,exp:"這個阻力源自期望理論中的工具性斷裂——學生不清楚「做什麼樣的改善」才能換來認可，需要明確標準。"},
     {q:"當學生「中途失去興趣」時，最適合使用哪個理論來介入？",opts:["自我效能理論","期望理論","自我決定論","三需求理論"],ans:3,exp:"三需求理論幫助釐清：學生的成就、親和或權力需求，哪一個在當前設計中沒有被滿足，進而調整策略。"},
     {q:"「迭代次數」作為評估指標，測量的核心能力是？",opts:["學習時間的長短","對回饋的重視程度與主動改善意願","記憶力","與同學的協作能力"],ans:1,exp:"迭代次數反映的不只是技術能力，更是一種思維模式——願意根據回饋反覆改善，正是業界最看重的特質之一。"},
-    {q:"這套動機轉換系統的設計哲學，最接近以下哪個描述？",opts:["用外部壓力強制學生行動","讓學習變得更簡單，讓學生不需要付出太多","創造條件讓學生由內而外地想要行動和成長","用獎懲機制控制學生行為"],ans:2,exp:"整套系統的設計核心是「創造內部動機的條件」——透過自主性、勝任感、連結感、楷模學習等機制，讓學生自發行動。"}
+    {q:"這套動機轉換系統的設計哲學，最接近以下哪個描述？",opts:["用外部壓力強制學生行動","讓學習變得更簡單，讓學生不需要付出太多","創造條件讓學生由內而外地想要行動和成長","用獎懲機制控制學生行為"],ans:2,exp:"整套系統的設計核心是「創造內部動機的條件」——透過自主性、勝任感、連結感、楷模學習等機制，讓學生自發行動。"},
+    {q:"當學生用 AI 生成完整分析卻無法自行解釋時，最根本的問題是？",opts:["AI 工具不夠好","學生發生了「認知卸載」，將思考外包給 AI","教師沒有禁止使用 AI","學生英文能力不足"],ans:1,exp:"認知卸載指學生將思考過程外包給 AI，導致自身批判性分析能力未被訓練，這是 AI 時代最需要警惕的學習風險。"},
+    {q:"防範 AI 認知卸載的最有效教學策略是？",opts:["全面禁止使用 AI","要求學生用自己的話重述 AI 產出的核心發現","增加考試次數","縮短作業繳交期限"],ans:1,exp:"能用自己的話重述是理解的最佳證據。這種「建設性困難」迫使學生維持後設認知參與，而非被動接受 AI 輸出。"}
   ],
   // M6
   m6_nav:"6. 延伸資源",m6_title:"延伸學習資源",m6_desc:"精選動機理論、職涯準備與數位作品集相關的學習資源，協助你深入探索。",
   // M7
   mlab_nav:"7. 互動實驗室",mlab_title:"互動實驗室：動機診斷工具",mlab_desc:"透過三個互動工具診斷你的動機型態與需求傾向。每個工具附有使用說明與指標意涵，幫助你將自我評估轉化為具體的行動方向。理論介入時序請參見主題三。",
+  mlab_collab_title:"🤝 協同學習提示",
+  mlab_collab_desc:"完成上方診斷後，請找一位同學比較彼此的結果差異，討論為什麼會有不同。實證研究顯示，同儕支持是協同學習影響學習投入的關鍵中介變數（路徑係數 0.442）。把個人診斷轉化為協同學習的起點，效果會倍增。",
+  m4_future_title:"🚀 未來展望：數位作品集的進化",
+  m4_future_desc:"隨著實體人工智慧（Physical AI）與擴增實境（XR）技術的成熟，未來的數位作品集將不僅展示分析思維，還能嵌入互動式 3D 操作展示、AR/VR 專案導覽，以及人機協作的完整歷程記錄。從現在開始建立迭代思維與數位展示能力，是通往未來的最佳準備。",
   // Footer
-  date:"Version 2026.03.12",
+  date:"Version 2026.03.13",
   copyright:"For Educational Use Only",
   architect_label:"Architect:",
   architect_name:"Prof. Shihmin Lo",
@@ -298,9 +314,13 @@ en:{
     {num:"05",title:"Resistance to Transformation",desc:"Strategies for common roadblocks and how to measure system effectiveness"}
   ],
   m0_start:"Start Learning →",
+  m0_sdl_title:"🔬 How This Course Connects to Self-Directed Learning (SDL)",
+  m0_sdl_desc:"The four motivation theories in this course are essentially the psychological mechanisms that drive Self-Directed Learning (SDL). SDL is a learner-initiated, self-regulated process, corresponding to Zimmerman's SRL cycle (Forethought → Performance → Self-Reflection). By completing this course, you gain not only career strategies but also lifelong self-directed learning capacity — the competency that empirical research confirms as most critical for university students facing the future.",
   m1_nav:"1. Three-Gap Diagnosis",m1_title:"Understanding the Three Gaps",
   m1_p1:"Before entering the workforce, Taiwanese students' motivation systems typically need a complete 'engine overhaul.' This is not a personal failure—it's a structural consequence of the education system design. Three typical gap challenges emerge when facing open-ended, standard-answer-free industry challenges.",
   m1_p2:"'The first time I was asked what unique insight I had about this role, my mind went blank—because no one had ever asked me to think for myself.' — A typical motivation gap experience",
+  m1_ei_title:"⚠️ High Social Skills ≠ High Self-Directed Learning",
+  m1_ei_desc:"Research reveals a counterintuitive finding: some students with strong interpersonal skills and popularity (high emotional intelligence) are actually more likely to avoid independent academic tasks. If this sounds like you, it doesn't mean you lack ability — your emotional potential simply hasn't found the right academic outlet. The structured process in Module 3 will help you convert your social strengths into learning momentum.",
   m1_cards:[
     {icon:"🔌",title:"Motivation Gap",desc:"Accustomed to standard answers, lacking internal drive for proactive exploration. Tends to wait for instructions rather than take initiative."},
     {icon:"🏗️",title:"Experience Gap",desc:"Lack of practical experience leading to self-doubt when facing real industries. 'I've never done this' becomes a reason to avoid trying."},
@@ -443,7 +463,13 @@ en:{
      solution:"Return to your core driver — find the overlap between the task and your personal needs (Three Needs Theory)",
      theory:"Three Needs Theory",theoryColor:"bg-rose-100 text-rose-700 dark:bg-rose-900/40 dark:text-rose-300",
      reflect:["At which point did you start feeling this is pointless? What happened at that point?","What is your biggest dissatisfaction right now: wrong direction, wrong method, or unclear goal?","If you could do this task entirely your own way, how would you do it?"],
-     action_ph:"What would re-energize me is ___, and I will try ___ this week"}
+     action_ph:"What would re-energize me is ___, and I will try ___ this week"},
+    {problem:"Used AI to generate the entire analysis but don't actually understand it",cause:"Cognitive Offloading: outsourcing thinking to AI",
+     action_strategy:"Close the AI tool and rewrite the three most important findings in your own words. If you can't, go back to the original data and read it again. Being able to explain it yourself is the only proof of understanding.",
+     solution:"AI is a tool, not a substitute. The evidence of understanding is 'I can restate it in my own words,' not 'AI wrote it for me' (Self-Efficacy authentic foundation)",
+     theory:"Self-Efficacy Authenticity",theoryColor:"bg-cyan-100 text-cyan-700 dark:bg-cyan-900/40 dark:text-cyan-300",
+     reflect:["Last time you used AI for an assignment, could you independently explain the conclusions without looking at AI output?","Which parts of the AI-generated content are you actually unsure about?","If an interviewer asked 'how did you do this analysis?', could you answer?"],
+     action_ph:"I will rewrite ___ in my own words; my verification is being able to explain it to a classmate"}
   ],
   m5_metrics_title:"Effectiveness Metrics",
   m5_terms:[
@@ -459,11 +485,17 @@ en:{
     {q:"The core problem of 'revised twice but still frustrated' is?",opts:["Student not working hard enough","Student doesn't know the evaluation criteria (unclear expectancy path)","Teacher didn't give enough time","Assignment is too difficult"],ans:1,exp:"This stems from Expectancy Theory's broken instrumentality—students don't know 'what kind of improvement' will be recognized. Clear standards are needed."},
     {q:"When a student 'loses interest midway,' which theory is most appropriate for intervention?",opts:["Self-Efficacy Theory","Expectancy Theory","SDT","Three Needs Theory"],ans:3,exp:"Three Needs Theory helps clarify: which of the student's achievement, affiliation, or power needs is not being satisfied in the current design."},
     {q:"'Iteration count' as an evaluation metric measures what core capacity?",opts:["Length of study time","Degree of valuing feedback and willingness to proactively improve","Memory capacity","Collaboration skills"],ans:1,exp:"Iteration count reflects not just technical ability but a mindset—willingness to repeatedly improve based on feedback, which is one of the most valued traits in industry."},
-    {q:"The design philosophy of this motivation transformation system most closely resembles?",opts:["Using external pressure to force student action","Making learning easier so students don't need to put in much effort","Creating conditions for students to want to act and grow from within","Using reward/punishment mechanisms to control student behavior"],ans:2,exp:"The system's core is 'creating conditions for internal motivation'—through autonomy, competence, relatedness, role modeling, students are driven to act voluntarily."}
+    {q:"The design philosophy of this motivation transformation system most closely resembles?",opts:["Using external pressure to force student action","Making learning easier so students don't need to put in much effort","Creating conditions for students to want to act and grow from within","Using reward/punishment mechanisms to control student behavior"],ans:2,exp:"The system's core is 'creating conditions for internal motivation'—through autonomy, competence, relatedness, role modeling, students are driven to act voluntarily."},
+    {q:"When a student generates a complete analysis with AI but can't explain it, the fundamental problem is?",opts:["The AI tool isn't good enough","The student experienced 'cognitive offloading' — outsourcing thinking to AI","The teacher didn't ban AI use","The student's English is insufficient"],ans:1,exp:"Cognitive offloading means outsourcing the thinking process to AI, leaving the student's own critical analysis skills untrained. This is the most important learning risk in the AI era."},
+    {q:"The most effective teaching strategy to prevent AI cognitive offloading is?",opts:["Ban all AI use","Require students to restate AI output's key findings in their own words","Increase exam frequency","Shorten assignment deadlines"],ans:1,exp:"Being able to restate in your own words is the best evidence of understanding. This 'constructive difficulty' forces students to maintain metacognitive engagement rather than passively accepting AI output."}
   ],
   m6_nav:"6. Resources",m6_title:"Extended Learning Resources",m6_desc:"Curated resources on motivation theories, career preparation, and digital portfolio building.",
   mlab_nav:"7. Interactive Lab",mlab_title:"Interactive Lab: Motivation Diagnostic Tools",mlab_desc:"Three interactive tools to diagnose your motivation profile and needs orientation. Each tool includes usage instructions and metric meanings to help you turn self-assessment into concrete action. See Module 3 for the theory intervention timeline.",
-  date:"Version 2026.03.12",
+  mlab_collab_title:"🤝 Collaborative Learning Prompt",
+  mlab_collab_desc:"After completing the diagnostics above, find a classmate and compare your results. Discuss why they differ. Research shows that peer support is a key mediating variable in how collaborative learning affects engagement (path coefficient 0.442). Converting personal diagnosis into a collaborative learning trigger multiplies the effect.",
+  m4_future_title:"🚀 Future Outlook: Evolution of Digital Portfolios",
+  m4_future_desc:"As Physical AI and XR technologies mature, future digital portfolios will go beyond showcasing analytical thinking to embed interactive 3D operation demos, AR/VR project walkthroughs, and complete human-AI collaboration records. Building iterative thinking and digital presentation skills now is the best preparation for that future.",
+  date:"Version 2026.03.13",
   copyright:"For Educational Use Only",
   architect_label:"Architect:",
   architect_name:"Prof. Shihmin Lo",
@@ -1041,6 +1073,7 @@ const App=()=>{
   const [analytics,setAnalytics]=useState(()=>Array.from({length:TOTAL},()=>({time:0,clicks:0,correct:0,answered:0,total:0})));
   const [aForm,setAForm]=useState({group:'G1',dept:'',id:'',name:''});
   const [m5Progress,setM5Progress]=useState({checked:{},actions:{}});
+  const [selRatings,setSelRatings]=useState(Array(TOTAL).fill({awareness:0,sharing:0}));
   const timerRef=useRef(null);
   const prevModule=useRef(0);
 
@@ -1099,12 +1132,12 @@ const App=()=>{
   const getModuleText=()=>{
     const m=module;
     if(m===0)return[
-      t.m0_title, t.m0_intro, t.m0_why, t.m0_why_desc,
+      t.m0_title, t.m0_intro, t.m0_why, t.m0_why_desc, t.m0_sdl_title, t.m0_sdl_desc,
       ...t.m0_stats.map(s=>s.val+' '+s.label),
       ...t.m0_modules.map(mod=>mod.num+'. '+mod.title+'. '+mod.desc)
     ].join('. ');
     if(m===1)return[
-      t.m1_title, t.m1_p1, t.m1_p2,
+      t.m1_title, t.m1_p1, t.m1_p2, t.m1_ei_title, t.m1_ei_desc,
       ...t.m1_cards.map(c=>c.title+'. '+c.desc),
       t.m1_diag_title,
       ...t.m1_diag.map((d,i)=>`${lang==='zh'?'第':'Q'}${i+1}${lang==='zh'?'題：':': '}${d.q} ${lang==='zh'?'對應':'→'} ${d.layer}`),
@@ -1130,7 +1163,7 @@ const App=()=>{
       ...t.m3_q.map((q,i)=>`${lang==='zh'?'第':'Q'}${i+1}${lang==='zh'?'題：':': '}${q.q}`)
     ].join('. ');
     if(m===4)return[
-      t.m4_title, t.m4_p1, t.m4_p2,
+      t.m4_title, t.m4_p1, t.m4_p2, t.m4_future_title, t.m4_future_desc,
       ...t.m4_modules.map(c=>c.title+', '+c.timing+'. '+c.desc),
       ...t.m4_tools.map(c=>c.name+': '+c.use+'. '+c.note),
       t.key_terms,
@@ -1149,7 +1182,7 @@ const App=()=>{
     if(m===6)return[t.m6_title, t.m6_desc,
       lang==='zh'?'本節提供核心理論、數位作品集工具與職涯準備的精選外部連結，點擊任一連結可開啟外部網站。':'This section provides curated external links for core theories, portfolio tools, and career resources. Click any link to open the external site.'
     ].join('. ');
-    if(m===7)return[t.mlab_title, t.mlab_desc,
+    if(m===7)return[t.mlab_title, t.mlab_desc, t.mlab_collab_title, t.mlab_collab_desc,
       lang==='zh'?'三斷層自我診斷量表：透過評分了解動機、經驗、價值三個斷層的強度。每題1-5分，分數越高代表該斷層越嚴重。':'Three-Gap Diagnosis: Rate yourself to see your motivation, experience, and value gap intensity. Higher score means more severe gap.',
       lang==='zh'?'期望理論動機計算器：調整期望值、工具性、誘因值，計算你的動機強度。動機強度低於40%時，專注提升最低的那個維度。':'Expectancy Calculator: Adjust expectancy, instrumentality, and valence. When score is below 40%, focus on the single lowest dimension.',
       lang==='zh'?'三需求職涯傾向分析：評估成就、權力、親和需求，找出你的主要驅動力與適合職涯方向。真實反映自己最重要。':'Three Needs Profile: Rate achievement, power, and affiliation needs. Honest self-reflection matters most.'
@@ -1217,6 +1250,10 @@ const App=()=>{
         <h2 className="font-serif font-bold text-xl text-[#004030] dark:text-[#D8C3A5] mb-2">{t.m0_why}</h2>
         <p className="text-slate-600 dark:text-slate-400 leading-relaxed">{t.m0_why_desc}</p>
       </div>
+      <div className="bg-emerald-50 dark:bg-emerald-900/20 rounded-2xl p-6 border border-emerald-200 dark:border-emerald-700">
+        <h3 className="font-bold text-emerald-800 dark:text-emerald-300 mb-2">{t.m0_sdl_title}</h3>
+        <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">{t.m0_sdl_desc}</p>
+      </div>
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {t.m0_stats.map((s,i)=>(
           <div key={i} className="bg-white dark:bg-slate-800 rounded-2xl p-5 border border-slate-200 dark:border-slate-700 text-center">
@@ -1257,6 +1294,10 @@ const App=()=>{
             <p className="text-sm leading-relaxed">{c.desc}</p>
           </div>
         ))}
+      </div>
+      <div className="bg-rose-50 dark:bg-rose-900/20 rounded-xl p-5 border border-rose-200 dark:border-rose-700">
+        <h3 className="font-bold text-rose-800 dark:text-rose-300 mb-2">{t.m1_ei_title}</h3>
+        <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">{t.m1_ei_desc}</p>
       </div>
       <div className="bg-amber-50 dark:bg-amber-900/20 rounded-2xl p-6 border border-amber-200 dark:border-amber-700">
         <h3 className="font-bold text-amber-800 dark:text-amber-300 mb-4 flex items-center gap-2"><IconCheckCircle size={18}/>{t.m1_diag_title}</h3>
@@ -1398,6 +1439,10 @@ const App=()=>{
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {t.m4_terms.map((term,i)=><FlipCard key={`m4-${visitCounts[4]}-${i}-${lang}`} front={term.front} back={term.back} t={t}/>)}
         </div>
+      </div>
+      <div className="bg-indigo-50 dark:bg-indigo-900/20 rounded-xl p-5 border border-indigo-200 dark:border-indigo-700">
+        <h3 className="font-bold text-indigo-800 dark:text-indigo-300 mb-2">{t.m4_future_title}</h3>
+        <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">{t.m4_future_desc}</p>
       </div>
       <ModuleQuiz key={`m4_q-${lang}`} questions={t.m4_q} t={t} moduleId={4} onQuizSubmit={handleQuizSubmit}/>
     </div>
@@ -1570,6 +1615,10 @@ const App=()=>{
         <ExpectancyCalcLab lang={lang}/>
         <NeedsProfileLab lang={lang}/>
       </div>
+      <div className="bg-emerald-50 dark:bg-emerald-900/20 rounded-2xl p-6 border border-emerald-200 dark:border-emerald-700">
+        <h3 className="font-bold text-emerald-800 dark:text-emerald-300 mb-2">{t.mlab_collab_title}</h3>
+        <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">{t.mlab_collab_desc}</p>
+      </div>
     </div>
   );};
 
@@ -1602,8 +1651,10 @@ const App=()=>{
         if(a.answered>0)return`${n.label},"${a.correct}","${a.answered}","${a.total}"`;
         return`${n.label},${t.analytics_no_data},,`;
       }).join('\n');
+      const selHeader=`\n\n${lang==='zh'?'SEL 自我評估（主題 1-5）':'SEL Self-Assessment (Modules 1-5)'}\n${t.analytics_module},${lang==='zh'?'自我覺察':'Self-Awareness'},${lang==='zh'?'願意分享':'Share Intent'}\n`;
+      const selRows=quizModules.map((n,i)=>{const r=selRatings[i+1]||{awareness:0,sharing:0};return`${n.label},${r.awareness||'-'},${r.sharing||'-'}`;}).join('\n');
       const summary=`\n\n${t.analytics_total_time},${totalTime}${t.analytics_sec}\n${t.analytics_total_clicks},${totalClicks}${t.analytics_times}\n${t.analytics_overall_acc},${overallAcc}%`;
-      const blob=new Blob([bom+header+timeHeader+timeRows+quizHeader+quizRows+summary],{type:'text/csv;charset=utf-8'});
+      const blob=new Blob([bom+header+timeHeader+timeRows+quizHeader+quizRows+selHeader+selRows+summary],{type:'text/csv;charset=utf-8'});
       const url=URL.createObjectURL(blob);
       const a=document.createElement('a');a.href=url;a.download=filename;a.click();URL.revokeObjectURL(url);
     };
@@ -1670,6 +1721,41 @@ const App=()=>{
                 })}
               </tbody>
             </table>
+          </div>
+        </div>
+
+        {/* SEL Self-Assessment */}
+        <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 overflow-hidden">
+          <div className="px-5 py-3 bg-emerald-50 dark:bg-emerald-900/20 border-b border-slate-200 dark:border-slate-700">
+            <p className="text-xs font-bold text-emerald-700 dark:text-emerald-400 uppercase tracking-wider">{lang==='zh'?'🌱 社會情緒學習（SEL）自我評估':'🌱 Social-Emotional Learning (SEL) Self-Assessment'}</p>
+            <p className="text-xs text-slate-500 mt-1">{lang==='zh'?'每完成一個模組後，反思你的自我覺察與社交分享意願（1-5分）':'After each module, reflect on your self-awareness and willingness to share (1-5)'}</p>
+          </div>
+          <div className="p-5 space-y-4">
+            {navItems.slice(1,6).map((n,i)=>{
+              const mi=i+1;
+              const r=selRatings[mi]||{awareness:0,sharing:0};
+              return(
+                <div key={i} className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 py-2 border-b border-slate-100 dark:border-slate-700 last:border-0">
+                  <span className="text-xs font-medium text-slate-700 dark:text-slate-300 w-40 shrink-0">{n.label}</span>
+                  <div className="flex-1 flex flex-col sm:flex-row gap-2 sm:gap-6">
+                    <label className="flex items-center gap-2 text-xs text-slate-500">
+                      <span className="w-24 shrink-0">{lang==='zh'?'自我覺察':'Self-Aware'}</span>
+                      <select value={r.awareness} onChange={e=>{const v=+e.target.value;setSelRatings(prev=>{const n=[...prev];n[mi]={...n[mi],awareness:v};return n;})}}
+                        className="border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 rounded px-2 py-1 text-xs">
+                        <option value={0}>-</option>{[1,2,3,4,5].map(v=><option key={v} value={v}>{v}</option>)}
+                      </select>
+                    </label>
+                    <label className="flex items-center gap-2 text-xs text-slate-500">
+                      <span className="w-24 shrink-0">{lang==='zh'?'願意分享':'Share Intent'}</span>
+                      <select value={r.sharing} onChange={e=>{const v=+e.target.value;setSelRatings(prev=>{const n=[...prev];n[mi]={...n[mi],sharing:v};return n;})}}
+                        className="border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 rounded px-2 py-1 text-xs">
+                        <option value={0}>-</option>{[1,2,3,4,5].map(v=><option key={v} value={v}>{v}</option>)}
+                      </select>
+                    </label>
+                  </div>
+                </div>
+              );
+            })}
           </div>
         </div>
         <div className="bg-slate-50 dark:bg-slate-900 rounded-2xl p-6">
